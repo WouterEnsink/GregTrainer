@@ -12,7 +12,7 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 
-//you give it an array of note number to play
+//you give it an array of note numbers to play
 //and it will generate the midi for that
 
 class MidiGenerator : private Timer
@@ -90,7 +90,7 @@ private:
     
     int numSamplesBetweenNotes;
     Array<int> notesToPlay;
-    decltype(notesToPlay.begin()) iterator;
+    int* iterator { nullptr };
     double sampleRate;
     int timeBetweenNotes; //in ms
     double bufferStartTime;
