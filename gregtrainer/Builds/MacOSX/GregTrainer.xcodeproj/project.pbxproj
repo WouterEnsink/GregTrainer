@@ -142,6 +142,13 @@
 			path = System/Library/Frameworks/Carbon.framework;
 			sourceTree = SDKROOT;
 		};
+		129BDE1600E419BED28FDBD0 = {
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = MidiGenerator.h;
+			path = ../../Source/MidiGenerator.h;
+			sourceTree = "SOURCE_ROOT";
+		};
 		190C6CB2ECF6DEECEC2887C8 = {
 			isa = PBXFileReference;
 			lastKnownFileType = wrapper.framework;
@@ -176,6 +183,13 @@
 			name = "juce_audio_formats";
 			path = "/Applications/JUCE/modules/juce_audio_formats";
 			sourceTree = "<absolute>";
+		};
+		32D89AB3E1CDA1837C4C3581 = {
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = Synth.h;
+			path = ../../Source/Synth.h;
+			sourceTree = "SOURCE_ROOT";
 		};
 		36C13F64F8CC20587057502C = {
 			isa = PBXFileReference;
@@ -345,6 +359,13 @@
 			path = "/Applications/JUCE/modules/juce_gui_basics";
 			sourceTree = "<absolute>";
 		};
+		B41251F0F40FC083BEBF0059 = {
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = GridDisplay.h;
+			path = ../../Source/GridDisplay.h;
+			sourceTree = "SOURCE_ROOT";
+		};
 		B7DA2E5E4CF7A322F2619AAE = {
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.cpp.cpp;
@@ -446,6 +467,9 @@
 		6F76ADA74C13F13D005CD7F7 = {
 			isa = PBXGroup;
 			children = (
+				129BDE1600E419BED28FDBD0,
+				32D89AB3E1CDA1837C4C3581,
+				B41251F0F40FC083BEBF0059,
 				7C5459042E567FFEFEEEB84C,
 				6C4B7E035348AE2867296B35,
 				B7DA2E5E4CF7A322F2619AAE,

@@ -4,6 +4,9 @@
               cppLanguageStandard="17">
   <MAINGROUP id="x0YCOc" name="GregTrainer">
     <GROUP id="{DC53F2B4-7995-6CD5-BCDE-9DE2CF7E9ACF}" name="Source">
+      <FILE id="WZShCK" name="MidiGenerator.h" compile="0" resource="0" file="Source/MidiGenerator.h"/>
+      <FILE id="OlRCwg" name="Synth.h" compile="0" resource="0" file="Source/Synth.h"/>
+      <FILE id="RETnEY" name="GridDisplay.h" compile="0" resource="0" file="Source/GridDisplay.h"/>
       <FILE id="AmZOdX" name="MainComponent.h" compile="0" resource="0" file="Source/MainComponent.h"/>
       <FILE id="lUwVYR" name="MainComponent.cpp" compile="1" resource="0"
             file="Source/MainComponent.cpp"/>
