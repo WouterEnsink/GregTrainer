@@ -10,8 +10,7 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "GridDisplay.h"
-#include "Synth.h"
-#include "MidiGenerator.h"
+#include "TrainerAudioSource.h"
 
 
 class MainComponent   : public AudioAppComponent
@@ -34,7 +33,7 @@ private:
     //==============================================================================
     
     TextButton playButton { "StartPlaying" };
-    MidiGenerator midiGenerator;
+    TrainerAudioSource audioSource;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainComponent)
 };

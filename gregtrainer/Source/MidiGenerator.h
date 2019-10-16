@@ -11,11 +11,12 @@
 #pragma once
 
 #include "../JuceLibraryCode/JuceHeader.h"
+#include "Utility.h"
 
 //you give it an array of note numbers to play
 //and it will generate the midi for that
 
-class MidiGenerator : private Timer
+class MidiGenerator
 {
 public:
     
@@ -32,70 +33,62 @@ public:
     void setNotes(const Array<int>& notes) noexcept
     {
         notesToPlay = notes;
+       
     }
     
     void setTimeBetweenNotes(int timeInMs) noexcept
     {
         timeBetweenNotes = timeInMs;
+        numSamplesBetweenNotes = timeBetweenNotes * sampleRate * 0.001;
+        print("num samples between notes: ", numSamplesBetweenNotes);
     }
     
     void startPlaying() noexcept
     {
-        iterator = notesToPlay.begin();
-        startTimer(timeBetweenNotes);
+        notesIndex = 0;
+        remainder = numSamplesBetweenNotes;
+        
     }
     
     void stopPlaying() noexcept
     {
-        stopTimer();
+        
     }
     
     int getNextMidiNote() noexcept
     {
-        if ((iterator + 1) == nullptr){
-            loopCompleted = true;
-            return 0;
+        if (notesIndex < notesToPlay.size())
+        {
+            return notesToPlay[notesIndex++];
         }
         
-        return *iterator++;
+        return 0;
     }
     
-    void timerCallback() override
+    //fills the midibuffer with messages
+    void renderNextMidiBlock(MidiBuffer& buffer, int numSamples)
     {
-        
-        if (!loopCompleted)
+        //need to put a note on message in the buffer
+        if(remainder < numSamples)
         {
-            if (auto note = getNextMidiNote() != 0)
+            if (auto note = getNextMidiNote())
             {
-                auto message = MidiMessage::noteOn(1, note, 0.9f);
-                auto time = Time::getMillisecondCounterHiRes() - bufferStartTime;
-                auto sample = static_cast<int>(sampleRate * time);
-                buffer.addEvent(message, sample);
+                buffer.addEvent(MidiMessage::noteOn(1, note, 0.9f), remainder);
+                remainder = numSamplesBetweenNotes - (numSamples - remainder);
             }
         }
-        else stopTimer();
-    }
-    
-    MidiBuffer getNextMidiBuffer() noexcept
-    {
-        //set current time, needed for next midibuffer
-        bufferStartTime = Time::getMillisecondCounterHiRes();
-        auto returnBuffer = buffer;
-        buffer.clear();
-        return returnBuffer;
+        else remainder -= numSamples;
     }
     
     
 private:
     
     int numSamplesBetweenNotes;
+    int remainder; //how many samples to go until a note needs to be put into a buffer
+    
     Array<int> notesToPlay;
-    int* iterator { nullptr };
+    int notesIndex;
     double sampleRate;
     int timeBetweenNotes; //in ms
-    double bufferStartTime;
-    bool loopCompleted;
-    bool bufferReset;
-    MidiBuffer buffer;
 };
 

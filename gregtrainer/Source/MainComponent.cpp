@@ -26,10 +26,11 @@ MainComponent::MainComponent()
     }
     
     addAndMakeVisible(playButton);
-    midiGenerator.setTimeBetweenNotes(200);
-    midiGenerator.setNotes({60, 62, 64, 65, 67, 69, 71, 72});
+
+    
     playButton.onClick = [this]{
-        midiGenerator.startPlaying();
+        print("start playing button");
+        audioSource.startPlaying(500, {60, 62, 64, 65, 67, 69, 71, 72});
     };
 }
 
@@ -41,15 +42,12 @@ MainComponent::~MainComponent()
 //==============================================================================
 void MainComponent::prepareToPlay (int samplesPerBlockExpected, double sampleRate)
 {
-    
+    audioSource.prepareToPlay(samplesPerBlockExpected, sampleRate);
 }
 
 void MainComponent::getNextAudioBlock (const AudioSourceChannelInfo& bufferToFill)
 {
-    //test if midi fetching works
-    auto buffer = midiGenerator.getNextMidiBuffer();
-    if (auto numEvents = buffer.getNumEvents() != 0)
-        std::cout << "buffer.numEvents: " << buffer.getNumEvents() << "\n";
+    audioSource.getNextAudioBlock(bufferToFill);
     
     bufferToFill.clearActiveBufferRegion();
     
@@ -58,7 +56,7 @@ void MainComponent::getNextAudioBlock (const AudioSourceChannelInfo& bufferToFil
 
 void MainComponent::releaseResources()
 {
-  
+    audioSource.releaseResources();
 }
 
 //==============================================================================

@@ -2328,6 +2328,12 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\Source\Utility.h">
+      <Filter>GregTrainer\Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\TrainerAudioSource.h">
+      <Filter>GregTrainer\Source</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\Source\MidiGenerator.h">
       <Filter>GregTrainer\Source</Filter>
     </ClInclude>

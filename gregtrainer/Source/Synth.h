@@ -11,6 +11,7 @@
 #pragma once
 
 #include "../JuceLibraryCode/JuceHeader.h"
+#include "Utility.h"
 
 struct SineWaveSound   : public SynthesiserSound
 {
