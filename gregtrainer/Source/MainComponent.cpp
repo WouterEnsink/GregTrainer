@@ -49,7 +49,7 @@ void MainComponent::getNextAudioBlock (const AudioSourceChannelInfo& bufferToFil
 {
     audioSource.getNextAudioBlock(bufferToFill);
     
-    bufferToFill.clearActiveBufferRegion();
+    
     
     
 }

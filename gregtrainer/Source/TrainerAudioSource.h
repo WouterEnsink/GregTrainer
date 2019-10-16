@@ -44,23 +44,12 @@ public:
     
     void getNextAudioBlock(const AudioSourceChannelInfo& channelInfo) override
     {
-        auto& audioBuffer = *channelInfo.buffer;
+        auto& audioBuffer = channelInfo.buffer;
         auto numSamples = channelInfo.numSamples;
         auto midiBuffer = MidiBuffer();
         
-        
         midiGenerator.renderNextMidiBlock(midiBuffer, numSamples);
         
-        auto midiIterator = MidiBuffer::Iterator(midiBuffer);
-        
-        auto mes = MidiMessage();
-        int sample;
-        
-        if(midiIterator.getNextEvent(mes, sample)){
-            print("sample: ", sample, "message:", mes.getDescription());
-        }
-        
-        if (midiBuffer.getNumEvents() != 0) print("num events:", midiBuffer.getNumEvents());
         synth.renderNextBlock(audioBuffer, midiBuffer, 0, numSamples);
     }
     
