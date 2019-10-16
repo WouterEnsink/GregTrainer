@@ -44,7 +44,7 @@ public:
     
     void getNextAudioBlock(const AudioSourceChannelInfo& channelInfo) override
     {
-        auto& audioBuffer = channelInfo.buffer;
+        auto& audioBuffer = *channelInfo.buffer;
         auto numSamples = channelInfo.numSamples;
         auto midiBuffer = MidiBuffer();
         
