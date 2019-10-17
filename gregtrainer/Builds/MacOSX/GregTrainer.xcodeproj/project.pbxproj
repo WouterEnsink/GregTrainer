@@ -69,6 +69,10 @@
 			isa = PBXBuildFile;
 			fileRef = B7DA2E5E4CF7A322F2619AAE;
 		};
+		6FFE9E9DA3B79036400D34D4 = {
+			isa = PBXBuildFile;
+			fileRef = 5ADE90F22C0E1615BB5B5563;
+		};
 		A39D4F6E9CA164C367D3F87F = {
 			isa = PBXBuildFile;
 			fileRef = B9B971AFC279E535DB2E826C;
@@ -134,6 +138,13 @@
 			name = "juce_cryptography";
 			path = "/Applications/JUCE/modules/juce_cryptography";
 			sourceTree = "<absolute>";
+		};
+		05DC7EEEEAF4432F2EF587AD = {
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = BinaryData.h;
+			path = ../../JuceLibraryCode/BinaryData.h;
+			sourceTree = "SOURCE_ROOT";
 		};
 		0A7644CF67E8F2630E81260E = {
 			isa = PBXFileReference;
@@ -253,6 +264,20 @@
 			name = "juce_data_structures";
 			path = "/Applications/JUCE/modules/juce_data_structures";
 			sourceTree = "<absolute>";
+		};
+		5ADE90F22C0E1615BB5B5563 = {
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			name = BinaryData.cpp;
+			path = ../../JuceLibraryCode/BinaryData.cpp;
+			sourceTree = "SOURCE_ROOT";
+		};
+		5E012EB3CDF5DB2B5EB3722B = {
+			isa = PBXFileReference;
+			lastKnownFileType = file.icns;
+			name = icon.icns;
+			path = ../../res/icon.icns;
+			sourceTree = "SOURCE_ROOT";
 		};
 		603D41F3F381433F4A680D0B = {
 			isa = PBXFileReference;
@@ -497,6 +522,7 @@
 			isa = PBXGroup;
 			children = (
 				6F76ADA74C13F13D005CD7F7,
+				5E012EB3CDF5DB2B5EB3722B,
 			);
 			name = GregTrainer;
 			sourceTree = "<group>";
@@ -525,6 +551,8 @@
 			isa = PBXGroup;
 			children = (
 				520BB9D3FAC41C58227A829E,
+				5ADE90F22C0E1615BB5B5563,
+				05DC7EEEEAF4432F2EF587AD,
 				B9B971AFC279E535DB2E826C,
 				D8ABD2422A29DF717295AA3F,
 				612DB76779830023813E2DEC,
@@ -804,6 +832,7 @@
 			files = (
 				C67EF921CD491E279B01A851,
 				F8D113335DAEEA0E3A1157E2,
+				6FFE9E9DA3B79036400D34D4,
 				A39D4F6E9CA164C367D3F87F,
 				6BE04217B68041728A7A3331,
 				8D346255C498547631021FC6,
