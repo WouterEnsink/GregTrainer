@@ -27,6 +27,7 @@ public:
     {
         midiGenerator.setNotes(notes);
         midiGenerator.setTimeBetweenNotes(timeInterval);
+        midiGenerator.setNoteLength(200);
         midiGenerator.startPlaying();
     }
     

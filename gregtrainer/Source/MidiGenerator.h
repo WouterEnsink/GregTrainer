@@ -33,7 +33,6 @@ public:
     void setNotes(const Array<int>& notes) noexcept
     {
         notesToPlay = notes;
-       
     }
     
     void setTimeBetweenNotes(int timeInMs) noexcept
@@ -43,11 +42,19 @@ public:
         print("num samples between notes: ", numSamplesBetweenNotes);
     }
     
+    //make sure sampleRate is set before this function is called
+    //also call this function after sampleRate is reset, to assert the right note length
+    void setNoteLength(int timeInMs) noexcept
+    {
+        noteLenghtInSamples = timeInMs * 0.001 * sampleRate;
+    }
+    
     void startPlaying() noexcept
     {
-        notesIndex = 0;
-        remainder = numSamplesBetweenNotes;
-        
+        notesIndexNoteOn = 0;
+        notesIndexNoteOff = 0;
+        remainderNoteOn = numSamplesBetweenNotes;
+        remainderNoteOff = remainderNoteOn + noteLenghtInSamples;
     }
     
     void stopPlaying() noexcept
@@ -55,40 +62,54 @@ public:
         
     }
     
-    int getNextMidiNote() noexcept
+    int getNextMidiNoteOn() noexcept
     {
-        if (notesIndex < notesToPlay.size())
-        {
-            return notesToPlay[notesIndex++];
-        }
-        
-        return 0;
+        return notesIndexNoteOn < notesToPlay.size() ? notesToPlay[notesIndexNoteOn++] : 0;
     }
     
-    //fills the midibuffer with messages
+    int getNextMidiNoteOff() noexcept
+    {
+        return notesIndexNoteOff < notesToPlay.size() ? notesToPlay[notesIndexNoteOff++] : 0;
+    }
+    
+    
+    //fills the midibuffer with messages if needed
     void renderNextMidiBlock(MidiBuffer& buffer, int numSamples)
     {
+        
         //need to put a note on message in the buffer
-        if(remainder < numSamples)
+        if(remainderNoteOn < numSamples)
         {
-            if (auto note = getNextMidiNote())
+            if (auto note = getNextMidiNoteOn())
             {
-                buffer.addEvent(MidiMessage::noteOn(1, note, 0.9f), remainder);
-                remainder = numSamplesBetweenNotes - (numSamples - remainder);
+                buffer.addEvent(MidiMessage::noteOn(1, note, .9f), remainderNoteOn);
+                remainderNoteOn = numSamplesBetweenNotes - (numSamples - remainderNoteOn);
             }
         }
-        else remainder -= numSamples;
+        else remainderNoteOn -= numSamples;
+        
+        //need to put a note off message in the buffer
+        if (remainderNoteOff < numSamples)
+        {
+            if (auto note = getNextMidiNoteOff())
+            {
+                buffer.addEvent(MidiMessage::noteOff(1, note, 0.f), remainderNoteOff);
+                remainderNoteOff = numSamplesBetweenNotes - (numSamples - remainderNoteOff);
+            }
+        }
+        else remainderNoteOff -= numSamples;
     }
     
     
 private:
     
     int numSamplesBetweenNotes;
-    int remainder; //how many samples to go until a note needs to be put into a buffer
-    
+    int remainderNoteOn; //how many samples to go until a note needs to be put into a buffer
+    int remainderNoteOff;
     Array<int> notesToPlay;
-    int notesIndex;
+    int notesIndexNoteOn, notesIndexNoteOff;
     double sampleRate;
     int timeBetweenNotes; //in ms
+    int noteLenghtInSamples;
 };
 
