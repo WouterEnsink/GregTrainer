@@ -1,16 +1,10 @@
-/*
-  ==============================================================================
 
-    This file was auto-generated!
-
-  ==============================================================================
-*/
 
 #include "MainComponent.h"
 #include "GridDisplay.h"
 
 //==============================================================================
-MainComponent::MainComponent()
+MainComponent::MainComponent() : gridDisplay({5, 5})
 {
     setSize (800, 600);
 
@@ -26,11 +20,12 @@ MainComponent::MainComponent()
     }
     
     addAndMakeVisible(playButton);
+    addAndMakeVisible(gridDisplay);
 
     
     playButton.onClick = [this]{
         print("start playing button");
-        audioSource.startPlaying(500, {60, 62, 64, 65, 67, 69, 71, 72});
+        audioSource.startPlaying(500, 400, {60, 62, 64, 65, 67, 69, 71, 72});
     };
 }
 
@@ -68,4 +63,5 @@ void MainComponent::paint (Graphics& g)
 void MainComponent::resized()
 {
     playButton.setBounds(getLocalBounds().removeFromLeft(200));
+    gridDisplay.setBounds(getLocalBounds());
 }

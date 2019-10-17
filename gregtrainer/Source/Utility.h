@@ -12,7 +12,7 @@
 
 
 template<typename... T>
-auto print(T... args){
-    ([](auto arg){ std::cout << arg << " "; }(args), ...);
+auto print(T&&... args){
+    ([](auto&& arg){ std::cout << arg << " "; } (args), ...);
     std::cout << '\n';
 }

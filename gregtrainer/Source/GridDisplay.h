@@ -11,6 +11,7 @@
 #pragma once
 
 #include "../JuceLibraryCode/JuceHeader.h"
+#include "Utility.h"
 
 //a schale is just some midi info of the notes it containes
 
@@ -33,20 +34,97 @@ class GridDisplay : public Component
 {
 public:
     
-    GridDisplay(Point<int> size) : size(size) { }
-    ~GridDisplay() { }
+    GridDisplay(Point<int> size) : size(size)
+    {
+        const auto [width, height] = size;
+        
+        gridTiles.resize(width);
+        
+        for (auto& row : gridTiles) row.resize(height);
+        
+        for (auto& column : gridTiles)
+            for (auto& tile : column)
+            {
+                tile = new GridTile({10, 10});
+                addAndMakeVisible(tile);
+            }
+    }
+    
+    ~GridDisplay()
+    {
+        //to avoid undefined behavior when the GridDisplay class is destroyed and the Component
+        //base class tries to access the already destroyed tiles
+        removeAllChildren();
+        
+        for(auto& column: gridTiles)
+            for(auto* tile: column) delete tile;
+    }
+    
+    void paint(Graphics& g) override
+    {
+        g.fillAll(Colours::grey);
+    }
+    
+    void resized() override
+    {
+        const auto bounds = getLocalBounds().reduced(20, 20);
+        
+        auto x = bounds.getX();
+        auto y = bounds.getY();
+        auto w = bounds.getWidth()  - x;
+        auto h = bounds.getHeight() - y;
+        
+        auto [numColumns, numRows] = size;
+        
+        auto tileWidth = w / numColumns;
+        auto tileHeight = h / numRows;
+        
+        for(int i = 0; i < numRows; ++i)
+            for (int j = 0; j < numColumns; ++j)
+                gridTiles[i][j]->setBounds({ i * tileWidth, j * tileHeight, tileWidth - 10, tileHeight -10});
+       
+    }
+    
     
 private:
     
     class GridTile : public Component
     {
-        GridTile(Colours colour);
+    public:
+        GridTile(const Point<int>& size)
+        {
+            setSize(size.getX(), size.getY());
+        }
         
-        void mouseDown(const MouseEvent& e) override;
+        void mouseDown(const MouseEvent& e) override
+        {
+            tileOn  = tileOn ? false : true;
+            repaint();
+        }
         
+        void paint(Graphics& g) override
+        {
+            tileOn ? g.fillAll(tileOnColour) : g.fillAll(tileOffColour);
+        }
+        
+        void resized() override { }
+        
+        bool isTileOn() const noexcept { return tileOn; }
+        
+        void setTile(bool on) noexcept
+        {
+            tileOn = on;
+            repaint();
+        }
+        
+    private:
+        
+        bool tileOn { false };
+        Colour tileOnColour { Colours::white };
+        Colour tileOffColour { Colours::black };
     };
     
-    Array<GridTile> gridTiles;
+    Array<Array<GridTile*>> gridTiles;
     
     Point<int> size;
     

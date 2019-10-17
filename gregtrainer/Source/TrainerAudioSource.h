@@ -23,11 +23,11 @@ public:
         synth.addSound(new SineWaveSound());
     }
     
-    void startPlaying(int timeInterval, const Array<int>& notes) noexcept
+    void startPlaying(int timeInterval, int noteLength, const Array<int>& notes) noexcept
     {
         midiGenerator.setNotes(notes);
         midiGenerator.setTimeBetweenNotes(timeInterval);
-        midiGenerator.setNoteLength(200);
+        midiGenerator.setNoteLength(noteLength);
         midiGenerator.startPlaying();
     }
     

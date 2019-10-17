@@ -1,10 +1,4 @@
-/*
-  ==============================================================================
 
-    This file was auto-generated!
-
-  ==============================================================================
-*/
 
 #pragma once
 
@@ -34,6 +28,8 @@ private:
     
     TextButton playButton { "StartPlaying" };
     TrainerAudioSource audioSource;
+    
+    GridDisplay gridDisplay;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainComponent)
 };

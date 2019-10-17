@@ -39,14 +39,13 @@ public:
     {
         timeBetweenNotes = timeInMs;
         numSamplesBetweenNotes = timeBetweenNotes * sampleRate * 0.001;
-        print("num samples between notes: ", numSamplesBetweenNotes);
     }
     
     //make sure sampleRate is set before this function is called
     //also call this function after sampleRate is reset, to assert the right note length
     void setNoteLength(int timeInMs) noexcept
     {
-        noteLenghtInSamples = timeInMs * 0.001 * sampleRate;
+        noteLenghtInSamples = timeInMs * sampleRate * 0.001;
     }
     
     void startPlaying() noexcept
@@ -74,7 +73,7 @@ public:
     
     
     //fills the midibuffer with messages if needed
-    void renderNextMidiBlock(MidiBuffer& buffer, int numSamples)
+    void renderNextMidiBlock(MidiBuffer& buffer, int numSamples) noexcept
     {
         
         //need to put a note on message in the buffer
