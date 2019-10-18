@@ -3,7 +3,7 @@
 #pragma once
 
 #include "../JuceLibraryCode/JuceHeader.h"
-#include "GridDisplay.h"
+#include "GridDisplayComponent.h"
 #include "TrainerAudioSource.h"
 
 
@@ -29,7 +29,7 @@ private:
     TextButton playButton { "StartPlaying" };
     TrainerAudioSource audioSource;
     
-    GridDisplay gridDisplay;
+    GridDisplayComponent gridDisplay;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainComponent)
 };

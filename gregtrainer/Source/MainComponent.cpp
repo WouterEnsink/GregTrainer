@@ -1,10 +1,10 @@
 
 
 #include "MainComponent.h"
-#include "GridDisplay.h"
+#include "GridDisplayComponent.h"
 
 //==============================================================================
-MainComponent::MainComponent() : gridDisplay({5, 5})
+MainComponent::MainComponent() : gridDisplay(8, 10, { "C", "B", "A", "G", "F", "E", "D", "C" })
 {
     setSize (800, 600);
 
@@ -57,11 +57,15 @@ void MainComponent::releaseResources()
 //==============================================================================
 void MainComponent::paint (Graphics& g)
 {
-    g.fillAll (getLookAndFeel().findColour (ResizableWindow::backgroundColourId));
+    g.fillAll (Colours::lightslategrey);
 }
 
 void MainComponent::resized()
 {
-    playButton.setBounds(getLocalBounds().removeFromLeft(200));
-    gridDisplay.setBounds(getLocalBounds());
+    auto bounds = getLocalBounds();
+    auto r = Rectangle { 100, 50, 200, 50 };
+    
+    playButton.setBounds(r);
+    gridDisplay.setBounds(getLocalBounds().reduced(50, 100));
+    
 }
