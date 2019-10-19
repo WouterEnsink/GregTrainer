@@ -4,29 +4,19 @@
 #include "GridDisplayComponent.h"
 
 //==============================================================================
-MainComponent::MainComponent() : gridDisplay(8, 10, { "C", "B", "A", "G", "F", "E", "D", "C" })
+MainComponent::MainComponent() : gridDisplay(10, 8, { "C", "B", "A", "G", "F", "E", "D", "C" })
 {
     setSize (800, 600);
 
-    if (RuntimePermissions::isRequired (RuntimePermissions::recordAudio)
-        && ! RuntimePermissions::isGranted (RuntimePermissions::recordAudio))
-    {
-        RuntimePermissions::request (RuntimePermissions::recordAudio,
-                                     [&] (bool granted) { if (granted)  setAudioChannels (2, 2); });
-    }
-    else
-    {
-        setAudioChannels (2, 2);
-    }
+    initializeAudioSettings();
     
-    addAndMakeVisible(playButton);
-    addAndMakeVisible(gridDisplay);
-
+    visitComponents({ &playButton, &gridDisplay }, [this](Component& c){ addAndMakeVisible(c); });
     
     playButton.onClick = [this]{
-        print("start playing button");
-        audioSource.startPlaying(500, 400, {60, 62, 64, 65, 67, 69, 71, 72});
+        //audioSource.startPlaying(300, 200, {60, 62, 60, 65, 67, 60, 71, 72, 74, 77});
+        gridDisplay.setTile(0, 0, true);
     };
+    
 }
 
 MainComponent::~MainComponent()
@@ -43,15 +33,25 @@ void MainComponent::prepareToPlay (int samplesPerBlockExpected, double sampleRat
 void MainComponent::getNextAudioBlock (const AudioSourceChannelInfo& bufferToFill)
 {
     audioSource.getNextAudioBlock(bufferToFill);
-    
-    
-    
-    
 }
 
 void MainComponent::releaseResources()
 {
     audioSource.releaseResources();
+}
+
+void MainComponent::initializeAudioSettings()
+{
+    if (RuntimePermissions::isRequired (RuntimePermissions::recordAudio)
+        && ! RuntimePermissions::isGranted (RuntimePermissions::recordAudio))
+    {
+        RuntimePermissions::request (RuntimePermissions::recordAudio,
+                                     [&] (bool granted) { if (granted)  setAudioChannels (2, 2); });
+    }
+    else
+    {
+        setAudioChannels (2, 2);
+    }
 }
 
 //==============================================================================
@@ -62,7 +62,7 @@ void MainComponent::paint (Graphics& g)
 
 void MainComponent::resized()
 {
-    auto bounds = getLocalBounds();
+    
     auto r = Rectangle { 100, 50, 200, 50 };
     
     playButton.setBounds(r);

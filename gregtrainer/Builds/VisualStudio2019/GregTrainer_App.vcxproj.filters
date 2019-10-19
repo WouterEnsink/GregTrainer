@@ -2331,6 +2331,9 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\Source\MelodyGenerator.h">
+      <Filter>GregTrainer\Source</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\Source\Utility.h">
       <Filter>GregTrainer\Source</Filter>
     </ClInclude>
@@ -2343,7 +2346,7 @@
     <ClInclude Include="..\..\Source\Synth.h">
       <Filter>GregTrainer\Source</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\GridDisplay.h">
+    <ClInclude Include="..\..\Source\GridDisplayComponent.h">
       <Filter>GregTrainer\Source</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\MainComponent.h">

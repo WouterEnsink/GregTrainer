@@ -8,8 +8,6 @@
 	<string>GregTrainer</string>
 	<key>CFBundleExecutable</key>
 	<string>GregTrainer</string>
-	<key>CFBundleIconFile</key>
-	<string>icon.icns</string>
 	<key>CFBundleIdentifier</key>
 	<string>com.yourcompany.GregTrainer</string>
 	<key>CFBundleName</key>

@@ -1908,11 +1908,12 @@
     <ClCompile Include="..\..\JuceLibraryCode\include_juce_opengl.cpp"/>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\Source\MelodyGenerator.h"/>
     <ClInclude Include="..\..\Source\Utility.h"/>
     <ClInclude Include="..\..\Source\TrainerAudioSource.h"/>
     <ClInclude Include="..\..\Source\MidiGenerator.h"/>
     <ClInclude Include="..\..\Source\Synth.h"/>
-    <ClInclude Include="..\..\Source\GridDisplay.h"/>
+    <ClInclude Include="..\..\Source\GridDisplayComponent.h"/>
     <ClInclude Include="..\..\Source\MainComponent.h"/>
     <ClInclude Include="C:\JUCE\modules\juce_audio_basics\audio_play_head\juce_AudioPlayHead.h"/>
     <ClInclude Include="C:\JUCE\modules\juce_audio_basics\buffers\juce_AudioChannelSet.h"/>

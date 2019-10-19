@@ -10,9 +10,23 @@
 
 #pragma once
 
+#include "../JuceLibraryCode/JuceHeader.h"
 
 template<typename... T>
-auto print(T&&... args){
+auto print(T&&... args) noexcept
+{
     ([](auto&& arg){ std::cout << arg << " "; } (args), ...);
     std::cout << '\n';
+}
+
+template<typename Function>
+auto visitComponents(const Array<Component*>& components, const Function& f) noexcept
+{
+    for(auto* c : components) f(*c);
+}
+
+template<typename T>
+auto getRectangleDimentions(const Rectangle<T>& r) noexcept
+{
+    return std::tuple<T, T, T, T> { r.getX(), r.getY(), r.getWidth(), r.getHeight() };
 }

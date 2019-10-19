@@ -5,6 +5,7 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "GridDisplayComponent.h"
 #include "TrainerAudioSource.h"
+#include "MelodyGenerator.h"
 
 
 class MainComponent   : public AudioAppComponent
@@ -26,7 +27,12 @@ public:
 private:
     //==============================================================================
     
+    void initializeAudioSettings();
+    
     TextButton playButton { "StartPlaying" };
+    
+    ArrowButton arrowButton { "arrow", 0.5f, Colours::black };
+    
     TrainerAudioSource audioSource;
     
     GridDisplayComponent gridDisplay;
