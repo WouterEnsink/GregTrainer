@@ -43,10 +43,18 @@ public:
     
     void setSettabilityColumn(int column, bool settable) noexcept;
     
+    int getNumRows() const noexcept;
+    
+    int getNumColumns() const noexcept;
+    
+    void turnAllTilesOff() noexcept;
+    
 private:
     
     class GridTileComponent;
     class GridColumnComponent;
+    
+    void forEachTile(std::function<void(GridTileComponent&)>&) noexcept;
     
     Property<int> spaceBetweenTiles {
         .value = 0,

@@ -3,6 +3,41 @@
 #include "MainComponent.h"
 #include "GridDisplayComponent.h"
 
+
+class InfoComponent : public Component
+{
+    void paint(Graphics& g) override
+    {
+        g.fillAll(Colours::lightslategrey);
+        g.setColour(Colours::black);
+        g.setFont(30.f);
+        
+        g.drawText("Creator: Wouter Ensink",
+                   getLocalBounds().toFloat().withTrimmedBottom(getHeight()/2),
+                   Justification::centred);
+        
+        g.setFont(25.f);
+        
+        auto bounds = getLocalBounds().toFloat();
+        
+        auto textBounds = bounds.withTrimmedTop(getHeight()/3).withTrimmedBottom(getHeight()/3);
+        
+        g.drawText("send bugs or suggestions to:",
+                   textBounds.translated(0, getHeight()/6),
+                   Justification::horizontallyCentred);
+        
+        g.drawText("wouter.ensink@student.hku.nl",
+                   textBounds.translated(0, getHeight()/3),
+                   Justification::horizontallyCentred);
+    }
+    
+    void resized() override
+    {
+        
+    }
+};
+
+
 //==============================================================================
 MainComponent::MainComponent() : gridDisplay(10, 8, { "C", "B", "A", "G", "F", "E", "D", "C" })
 {
@@ -10,25 +45,34 @@ MainComponent::MainComponent() : gridDisplay(10, 8, { "C", "B", "A", "G", "F", "
 
     initializeAudioSettings();
     
-    visitComponents({ &playButton, &gridDisplay, &generateButton, &submitButton, &answerLabel },
+    visitComponents({ &playButton, &gridDisplay, &generateButton, &submitButton, &answerLabel, &infoButton },
                     [this](Component& c){ addAndMakeVisible(c); });
     
     playButton.onClick = [this]{
         audioSource.startPlaying(melody.noteLength, melody.timeBetweenNotes, melody.midiNotes);
+        playButton.setButtonText("Play Again");
     };
     
     generateButton.onClick = [this]{
         melody = melodyGenerator.generateMelody(10);
+        gridDisplay.turnAllTilesOff();
+        gridDisplay.setTile(gridDisplay.getNumColumns()-1, gridDisplay.getNumRows() - melody.normalizedGroundNoteIndex - 1, true);
+        playButton.setButtonText("Start Playing");
     };
     
-    submitButton.onClick = []{
-        Random r;
-        print(r.nextInt(7));
+    submitButton.onClick = [this]{
+        answerLabel.setText("You Suck", NotificationType::dontSendNotification);
+    };
+    
+    infoButton.onClick = [this]{
+        auto* infoPanel = new InfoComponent();
+        infoPanel->setSize(400, 200);
+        CallOutBox::launchAsynchronously(infoPanel, infoButton.getScreenBounds(), nullptr);
+        
     };
     
     answerLabel.setText("Answer will be shown here!", NotificationType::dontSendNotification);
     answerLabel.setJustificationType(Justification::centred);
-    answerLabel.setBorderSize(BorderSize<int>{0});
 }
 
 MainComponent::~MainComponent()
@@ -85,5 +129,6 @@ void MainComponent::resized()
     gridDisplay.setBounds(getLocalBounds().reduced(50, 100));
     
     answerLabel.setBounds(100, 500, 600, 100);
+    infoButton.setBounds(10, 10, 25, 25);
     
 }

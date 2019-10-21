@@ -32,6 +32,7 @@ private:
     TextButton playButton { "Start Playing" };
     TextButton generateButton { "Generate Melody" };
     TextButton submitButton { "Submit Answer" };
+    TextButton infoButton { "i" };
     
     Label answerLabel ;
     
@@ -44,3 +45,4 @@ private:
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainComponent)
 };
+

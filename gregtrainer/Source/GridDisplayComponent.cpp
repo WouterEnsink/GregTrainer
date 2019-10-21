@@ -311,6 +311,22 @@ void GridDisplayComponent::setSettabilityColumn(int column, bool settable) noexc
     jassert(column < numColumns);
 }
 
+int GridDisplayComponent::getNumRows() const noexcept { return numRows; }
+
+int GridDisplayComponent::getNumColumns() const noexcept { return numColumns; }
+
+
+void GridDisplayComponent::turnAllTilesOff() noexcept
+{
+    for(int c = 0; c < numColumns; ++c)
+        for(int r = 0; r < numRows; ++r)
+            columns[c]->setTile(r, false);
+}
+
+void GridDisplayComponent::forEachTile(std::function<void (GridTileComponent&)>& func) noexcept
+{
+    
+}
 
 /*******************************************************************************************/
 
