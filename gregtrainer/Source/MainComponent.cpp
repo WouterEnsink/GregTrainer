@@ -10,13 +10,25 @@ MainComponent::MainComponent() : gridDisplay(10, 8, { "C", "B", "A", "G", "F", "
 
     initializeAudioSettings();
     
-    visitComponents({ &playButton, &gridDisplay }, [this](Component& c){ addAndMakeVisible(c); });
+    visitComponents({ &playButton, &gridDisplay, &generateButton, &submitButton, &answerLabel },
+                    [this](Component& c){ addAndMakeVisible(c); });
     
     playButton.onClick = [this]{
-        //audioSource.startPlaying(300, 200, {60, 62, 60, 65, 67, 60, 71, 72, 74, 77});
-        gridDisplay.setTile(0, 0, true);
+        audioSource.startPlaying(melody.noteLength, melody.timeBetweenNotes, melody.midiNotes);
     };
     
+    generateButton.onClick = [this]{
+        melody = melodyGenerator.generateMelody(10);
+    };
+    
+    submitButton.onClick = []{
+        Random r;
+        print(r.nextInt(7));
+    };
+    
+    answerLabel.setText("Answer will be shown here!", NotificationType::dontSendNotification);
+    answerLabel.setJustificationType(Justification::centred);
+    answerLabel.setBorderSize(BorderSize<int>{0});
 }
 
 MainComponent::~MainComponent()
@@ -62,10 +74,16 @@ void MainComponent::paint (Graphics& g)
 
 void MainComponent::resized()
 {
+    setSize(800, 600); //makes window nonresizable
     
-    auto r = Rectangle { 100, 50, 200, 50 };
+    auto r = Rectangle { 50, 25, 200, 50 };
     
-    playButton.setBounds(r);
+    //set bounds for buttons with even spacing
+    visitComponents({ &playButton, &generateButton, &submitButton },
+                    [&r](auto& c) { c.setBounds(r); r.translate(250, 0); });
+    
     gridDisplay.setBounds(getLocalBounds().reduced(50, 100));
+    
+    answerLabel.setBounds(100, 500, 600, 100);
     
 }

@@ -29,9 +29,14 @@ private:
     
     void initializeAudioSettings();
     
-    TextButton playButton { "StartPlaying" };
+    TextButton playButton { "Start Playing" };
+    TextButton generateButton { "Generate Melody" };
+    TextButton submitButton { "Submit Answer" };
     
-    ArrowButton arrowButton { "arrow", 0.5f, Colours::black };
+    Label answerLabel ;
+    
+    MelodyGenerator melodyGenerator;
+    Melody melody;
     
     TrainerAudioSource audioSource;
     

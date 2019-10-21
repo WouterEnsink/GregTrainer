@@ -412,6 +412,9 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\Source\GridDisplayComponent.cpp">
+      <Filter>GregTrainer\Source</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\Source\MainComponent.cpp">
       <Filter>GregTrainer\Source</Filter>
     </ClCompile>
