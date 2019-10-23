@@ -13,6 +13,11 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "Utility.h"
 
+/*
+    For now this is a simple sine synth from a Juce example as I haven't had the time to make
+    a synth myself yet.
+ */
+
 struct SineWaveSound   : public SynthesiserSound
 {
     SineWaveSound() {}
@@ -65,7 +70,7 @@ struct SineWaveVoice   : public SynthesiserVoice
     {
         if (angleDelta != 0.0)
         {
-            if (tailOff > 0.0) // [7]
+            if (tailOff > 0.0)
             {
                 while (--numSamples >= 0)
                 {
@@ -77,11 +82,11 @@ struct SineWaveVoice   : public SynthesiserVoice
                     currentAngle += angleDelta;
                     ++startSample;
                     
-                    tailOff *= 0.99; // [8]
+                    tailOff *= 0.99;
                     
                     if (tailOff <= 0.005)
                     {
-                        clearCurrentNote(); // [9]
+                        clearCurrentNote();
                         
                         angleDelta = 0.0;
                         break;
@@ -90,7 +95,7 @@ struct SineWaveVoice   : public SynthesiserVoice
             }
             else
             {
-                while (--numSamples >= 0) // [6]
+                while (--numSamples >= 0)
                 {
                     auto currentSample = (float) (std::sin (currentAngle) * level);
                     

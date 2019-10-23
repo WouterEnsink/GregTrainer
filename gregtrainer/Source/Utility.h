@@ -13,7 +13,7 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 
 /*
- Some Utitlity functions and classes to make things a little cleaner and more confinient
+ * Some Utitlity functions and classes to make things a little cleaner and more confinient
  */
 
 template<typename... T>
@@ -35,6 +35,11 @@ auto getRectangleDimentions(const Rectangle<T>& r) noexcept
     return std::tuple<T, T, T, T> { r.getX(), r.getY(), r.getWidth(), r.getHeight() };
 }
 
+/* Swift like Property with a getter and setter that can compute
+ * both the internal value aswel as the value of another variable
+ * when assigned a new value
+ */
+
 template<typename T>
 class Property
 {
@@ -45,4 +50,18 @@ public:
     std::function<T(T)> set;
     std::function<T(T)> get;
     T value;
+};
+
+/*
+ * So we don't have to implement all of these methods everytime we inherent from ValueTree::Listener
+ */
+class TreeListener : public ValueTree::Listener
+{
+public:
+    void valueTreePropertyChanged(ValueTree&, const Identifier&) override { }
+    void valueTreeChildAdded(ValueTree&, ValueTree&) override { }
+    void valueTreeChildRemoved(ValueTree&, ValueTree&, int) override { }
+    void valueTreeChildOrderChanged(ValueTree&, int, int) override { }
+    void valueTreeParentChanged(ValueTree&) override { }
+    void valueTreeRedirected(ValueTree&) override { }
 };

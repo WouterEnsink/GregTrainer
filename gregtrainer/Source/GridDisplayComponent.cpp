@@ -10,6 +10,8 @@
 
 #include "GridDisplayComponent.h"
 
+const Identifier IDs::TileColour = "TileColour";
+
 
 class GridDisplayComponent::GridTileComponent     : public Component
 {
@@ -24,6 +26,7 @@ public:
     {
         tileOn = tileOn ? false : true;
         tilePressedCallback(this);
+        mouseDownOnTile = true;
         repaint();
     }
     
@@ -36,6 +39,12 @@ public:
     void mouseExit(const MouseEvent&) override
     {
         hoover = false;
+        repaint();
+    }
+    
+    void mouseUp(const MouseEvent&) override
+    {
+        mouseDownOnTile = false;
         repaint();
     }
     
@@ -61,11 +70,16 @@ public:
         auto bounds = getLocalBounds().reduced(10);
         
         g.drawText(tileText, bounds, Justification::centred);
+        
+        if(mouseDownOnTile) {
+            g.setColour(Colours::white);
+            g.fillRoundedRectangle(floatBounds, roundness);
+        }
     }
     
     
     void resized() override { }
-    
+
     bool isTileOn() const noexcept                  { return tileOn; }
     
     void setTile(bool on) noexcept                  { tileOn = on; repaint(); }
@@ -78,7 +92,7 @@ public:
     
     void setRoundness(float roundness) noexcept     { roundness = roundness; repaint(); }
     
-    void setSettability(bool settable) noexcept     { isSettable = settable; }
+    void setSetability(bool setable) noexcept       { isSetable = setable; }
     
 private:
     
@@ -87,157 +101,130 @@ private:
     
     Font noteFont { "Arial", 30.f, Font::plain };
     
-    float roundness { 10.f };
+    float roundness { 5.f };
     
     String tileText { "A" };
     
     bool tileOn { false };
     bool hoover { false };
+    bool mouseDownOnTile { false };
     
-    bool isSettable { true };
+    bool isSetable { true };
     
     Colour tileOnColour  { Colours::gainsboro };
-    Colour tileOffColour { Colours::lightslategrey };
-    Colour hooverColour  { Colours::lightblue };
+    Colour tileOffColour { /*Colours::lightslategrey*/ Colours::dimgrey };
+    Colour hooverColour  { /*Colours::lightblue */ Colours::dimgrey };
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(GridTileComponent)
     
 };
 
 
-
 /*******************************************************************************************/
 
-class GridDisplayComponent::GridColumnComponent   : public Component
+/** Manages the behaviour of a column of GridTiles, but doesn't draw them
+ *  it's not a component!
+ */
+
+
+class GridDisplayComponent::GridColumn
 {
 public:
     
-    GridColumnComponent(int numTiles) : numTiles(numTiles)
+    GridColumn(int numRows) : numRows(numRows)
     {
-        tiles.resize(numTiles);
-        
-        for(auto& tile : tiles)
-        {
-            tile = new GridTileComponent([this](GridTileComponent* tilePressed){
-                if(tilePressed->isTileOn())
-                {
-                    for(auto* tile : tiles)
-                        if (tile != tilePressed)
-                            tile->setTile(false);
-                }
-            });
-            
-            addAndMakeVisible(tile);
-        }
+        tiles.resize(numRows);
+        for(auto& t : tiles)
+            t = new GridTileComponent([this](auto* tile){ tileClicked(tile); });
     }
     
-    ~GridColumnComponent()
+    ~GridColumn()
     {
-        removeAllChildren();
-        
-        for(auto* tile : tiles)
-            delete tile;
+        for (auto* t : tiles) delete t;
     }
     
-    void paint(Graphics& g) override
+    void tileClicked(GridTileComponent* tile) noexcept
     {
-        
+        //if this turned the tile on, then all other tiles should be turned off
+        if(tile->isTileOn())
+            for(auto* t: tiles)
+                if (t != tile) t->setTile(false);
     }
     
-    void resized() override
+    void setAllTiles(bool state) noexcept
     {
-        const auto bounds = getLocalBounds();
-        
-        const auto [x, y, w, h] = getRectangleDimentions(bounds);
-        
-        const auto tileHeight = h / numTiles;
-        
-        auto halfSpaceBetweenTiles = spaceBetweenTiles / 2;
-        
-        for(auto i = 0; i < numTiles; ++i)
-            tiles[i]->setBounds(x,
-                                i * tileHeight + y + halfSpaceBetweenTiles,
-                                w - halfSpaceBetweenTiles,
-                                tileHeight - spaceBetweenTiles);
+        for(auto& t : tiles) t->setTile(state);
     }
     
-    
-    void setTileTexts(const Array<String>& texts) noexcept
+    void forEachTile(const std::function<void(GridTileComponent&)>& function)
     {
-        jassert(texts.size() == tiles.size());
+        for(auto& t : tiles) function(*t);
+    }
+    
+    void setTile(int row, bool state) noexcept
+    {
+        tiles[row]->setTile(state);
+    }
+    
+    void setText(const StringArray& text)
+    {
+        jassert(text.size() == tiles.size());
         
-        for(int i = 0; i < numTiles; ++i) tiles[i]->setText(texts[i]);
-        repaint();
+        for(int i = 0; i < numRows; ++i)
+            tiles[i]->setText(text[i]);
     }
     
-    void setSpaceBetweenTiles(int space) noexcept
+    Component* getTileComponent(int index)
     {
-        spaceBetweenTiles = space;
-        repaint();
+        return tiles[index];
     }
     
-    int getIndexTileOn() const noexcept
+    int getIndexActivatedTile()
     {
-        for(int i = 0; i < tiles.size(); ++i)
-            if (tiles[i]->isTileOn()) return i;
+        for(int r = 0; r < numRows; ++r)
+            if(tiles[r]->isTileOn()) return r;
         
         return -1;
     }
     
-    void setTile(int row, bool on) noexcept
-    {
-        tiles[row]->setTile(on);
-    }
-    
-    void setSettabilityColumn(bool settable) noexcept
-    {
-        isSettable = settable;
-        for (auto* t : tiles) t->setSettability(settable);
-    }
-    
-    void setSettabilityTile(int row, bool settable) noexcept
-    {
-        tiles[row]->setSettability(settable);
-    }
-    
 private:
     
-    
-    int numTiles;
-    int activatedTileNumber;
-    int spaceBetweenTiles { 10 };
-    
-    bool isSettable { true };
-    
+    int columnNumber;
+    int numRows;
     Array<GridTileComponent*> tiles;
     
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(GridColumnComponent)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(GridColumn)
 };
-
-
 
 
 /*******************************************************************************************/
 
 
 
-GridDisplayComponent::GridDisplayComponent(int numColumns, int numRows, const Array<String>& rowsText) :
+GridDisplayComponent::GridDisplayComponent(ValueTree& t, int numColumns, int numRows, const StringArray& rowsText) :
     numRows(numRows),
-    numColumns(numColumns)
+    numColumns(numColumns),
+    tree(t)
 {
     
     jassert(numRows == rowsText.size()); //you must have as many texts as you have rows
     
-    columns.resize(numColumns);
+    gridColumns.resize(numColumns);
     
-    for(auto& column : columns)
+    for(auto& c : gridColumns)
     {
-        column = new GridColumnComponent(numRows);
-        addAndMakeVisible(column);
-        column->setTileTexts(rowsText);
+        c = new GridColumn(numRows);
+        c->forEachTile([this](auto& tile){ addAndMakeVisible(tile); });
+        c->setText(rowsText);
     }
     
-    setSpaceBetweenTiles(6);
+    setSpaceBetweenTiles(2);
+    tree.addListener(this);
+    ValueTree child { IDs::TileColour };
+    Colour c = Colours::black;
+    
+    tree.setProperty(IDs::TileColour, c.toString(), nullptr);
+   // tree.appendChild(child, nullptr);
 }
 
 
@@ -245,7 +232,7 @@ GridDisplayComponent::~GridDisplayComponent()
 {
     removeAllChildren();
     
-    for(auto* column : columns) delete column;
+    for(auto* column : gridColumns) delete column;
 }
 
 
@@ -253,32 +240,40 @@ void GridDisplayComponent::paint(Graphics& g)
 {
     // g.setColour(Colours::lightslategrey);
     g.setColour(Colours::black);
-    g.fillRoundedRectangle(getLocalBounds().toFloat(), 10.f);
+    g.fillRoundedRectangle(getLocalBounds().toFloat(), 5.f);
+}
+
+Rectangle<int> GridDisplayComponent::getBoundsForTile(int column, int row)
+{
+    auto bounds = getLocalBounds();
+    auto [x, y, w, h] = getRectangleDimentions(bounds);
+    
+    w /= numColumns;
+    h /= numRows;
+
+    return {
+        x + column * w + halfSpaceBetweenTiles,
+        y + row * h + halfSpaceBetweenTiles,
+        w - spaceBetweenTiles,
+        h - spaceBetweenTiles
+    };
 }
 
 
 void GridDisplayComponent::resized()
 {
-    const auto bounds = getLocalBounds();
-    
-    const auto [x, y, w, h] = getRectangleDimentions(bounds);
-    
-    const auto columnWidth = w / numColumns;
-    
-    //const auto halfSpaceBetweenTiles = spaceBetweenTiles / 2;
-    
-    for(int i = 0; i < numColumns; ++i)
-        columns[i]->setBounds(x + i * columnWidth + halfSpaceBetweenTiles,
-                              y + halfSpaceBetweenTiles,
-                              columnWidth - halfSpaceBetweenTiles,
-                              h - halfSpaceBetweenTiles);
+    for(int c = 0; c < numColumns; c++)
+        for(int r = 0; r < numRows; r++)
+        {
+            auto b = getBoundsForTile(c, r);
+            gridColumns[c]->getTileComponent(r)->setBounds(b);
+        }
 }
 
 
 void GridDisplayComponent::setSpaceBetweenTiles(int space) noexcept
 {
     spaceBetweenTiles = space;
-    for(auto* c : columns) c->setSpaceBetweenTiles(space);
     repaint();
 }
 
@@ -286,27 +281,27 @@ void GridDisplayComponent::setSpaceBetweenTiles(int space) noexcept
 Array<int> GridDisplayComponent::getGridStates() const noexcept
 {
     Array<int> states;
-    states.resize(columns.size());
-    for(auto* c : columns) states.add(c->getIndexTileOn());
+    states.resize(gridColumns.size());
+    for(auto* c : gridColumns) states.add(c->getIndexActivatedTile());
     return states;
 }
 
 
-void GridDisplayComponent::setTile(int column, int row, bool on) noexcept
+void GridDisplayComponent::setTile(int column, int row, bool state) noexcept
 {
     jassert(row < numRows && column < numColumns);
     
-    columns[column]->setTile(row, on);
+    gridColumns[column]->setTile(row, state);
 }
 
 
-void GridDisplayComponent::setSettabilityTile(int column, int row, bool settable) noexcept
+void GridDisplayComponent::setSetabilityTile(int column, int row, bool settable) noexcept
 {
     jassert(row < numRows && column < numColumns);
     
 }
 
-void GridDisplayComponent::setSettabilityColumn(int column, bool settable) noexcept
+void GridDisplayComponent::setSetabilityColumn(int column, bool settable) noexcept
 {
     jassert(column < numColumns);
 }
@@ -320,12 +315,23 @@ void GridDisplayComponent::turnAllTilesOff() noexcept
 {
     for(int c = 0; c < numColumns; ++c)
         for(int r = 0; r < numRows; ++r)
-            columns[c]->setTile(r, false);
+            gridColumns[c]->setTile(r, false);
 }
 
-void GridDisplayComponent::forEachTile(std::function<void (GridTileComponent&)>& func) noexcept
+void GridDisplayComponent::forEachTile(const std::function<void (GridTileComponent&)>& func) noexcept
 {
-    
+    for(auto* c : gridColumns)
+        c->forEachTile(func);
+}
+
+void GridDisplayComponent::valueTreePropertyChanged(ValueTree& tree, const Identifier& id)
+{
+    if(id == IDs::TileColour)
+    {
+        auto colourString = tree.getPropertyAsValue(IDs::TileColour, nullptr).toString();
+        auto colour = Colour::fromString(colourString);
+        forEachTile([colour](GridTileComponent& tile){ tile.setTileOffColour(colour); });
+    }
 }
 
 /*******************************************************************************************/

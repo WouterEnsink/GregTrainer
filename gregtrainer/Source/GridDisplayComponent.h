@@ -13,15 +13,23 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "Utility.h"
 
+struct IDs
+{
+    static const Identifier TileColour;
+
+};
 
 /*****************************************************************************************************/
 
+/* Should be updated to remove the GridColumnComponent class
+ * as that was just an ugly but quick solution
+ */
 
-class GridDisplayComponent  : public Component
+class GridDisplayComponent  : public Component, public TreeListener
 {
 public:
     
-    GridDisplayComponent(int numColumns, int numRows, const Array<String>& rowsText);
+    GridDisplayComponent(ValueTree&, int numColumns, int numRows, const StringArray& rowsText);
     
     ~GridDisplayComponent();
     
@@ -29,19 +37,16 @@ public:
     
     void resized() override;
     
-    
     void setSpaceBetweenTiles(int space) noexcept;
     
-    /*returns array with wich row is on in each colum*/
+    /* returns array with wich row is on in each column */
     Array<int> getGridStates() const noexcept;
-    
     
     void setTile(int column, int row, bool on) noexcept;
     
-    //set whether or not the user can set or unset a tile
-    void setSettabilityTile(int column, int row, bool settable) noexcept;
+    void setSetabilityTile(int column, int row, bool settable) noexcept;
     
-    void setSettabilityColumn(int column, bool settable) noexcept;
+    void setSetabilityColumn(int column, bool settable) noexcept;
     
     int getNumRows() const noexcept;
     
@@ -49,13 +54,18 @@ public:
     
     void turnAllTilesOff() noexcept;
     
+    Rectangle<int> getBoundsForTile(int column, int row);
+    
 private:
     
     class GridTileComponent;
-    class GridColumnComponent;
+    class GridColumn;
     
-    void forEachTile(std::function<void(GridTileComponent&)>&) noexcept;
+    void forEachTile(const std::function<void(GridTileComponent&)>&) noexcept;
     
+    void valueTreePropertyChanged(ValueTree&, const Identifier&) override;
+    
+    /* this property also computes the value for halfSpaceBetweenTiles */
     Property<int> spaceBetweenTiles {
         .value = 0,
         .set = [this](auto v){ halfSpaceBetweenTiles = v/2; return v; },
@@ -64,7 +74,10 @@ private:
     
     int numRows, numColumns;
     int halfSpaceBetweenTiles;
-    Array<GridColumnComponent*> columns;
+    
+    Array<GridColumn*> gridColumns;
+    
+    ValueTree tree;
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(GridDisplayComponent)
     

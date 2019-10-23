@@ -4,15 +4,24 @@
 #include "GridDisplayComponent.h"
 
 
-class InfoComponent : public Component
+class InfoPanelComponent : public Component
 {
+public:
+    InfoPanelComponent()
+    {
+        addAndMakeVisible(emailLink);
+        Font fond { "Arial", 25.f, Font::plain };
+        emailLink.setFont(fond, false);
+        emailLink.setColour(HyperlinkButton::textColourId, Colours::blue);
+    }
+    
     void paint(Graphics& g) override
     {
         g.fillAll(Colours::lightslategrey);
         g.setColour(Colours::black);
         g.setFont(30.f);
         
-        g.drawText("Creator: Wouter Ensink",
+        g.drawText("Author: Wouter Ensink",
                    getLocalBounds().toFloat().withTrimmedBottom(getHeight()/2),
                    Justification::centred);
         
@@ -22,31 +31,76 @@ class InfoComponent : public Component
         
         auto textBounds = bounds.withTrimmedTop(getHeight()/3).withTrimmedBottom(getHeight()/3);
         
-        g.drawText("send bugs or suggestions to:",
+        g.drawText("Send Bugs or Requests to:",
                    textBounds.translated(0, getHeight()/6),
-                   Justification::horizontallyCentred);
-        
-        g.drawText("wouter.ensink@student.hku.nl",
-                   textBounds.translated(0, getHeight()/3),
                    Justification::horizontallyCentred);
     }
     
     void resized() override
     {
-        
+        auto bounds = getLocalBounds().withTrimmedTop(getHeight()/3).withTrimmedBottom(getHeight()/3);
+        emailLink.setBounds(bounds.translated(0, getHeight()/3));
     }
+    
+    HyperlinkButton emailLink { "wouter.ensink@student.hku.nl", { "wouter.ensink@student.hku.nl" } };
+};
+
+//==============================================================================
+
+/** Colour Picker to set the colour of the grid
+ */
+
+class MainComponent::ColourPickerWindow : public DocumentWindow
+{
+public:
+    
+    ColourPickerWindow(MainComponent& p) :
+        DocumentWindow("Colour Picker", Colours::black, TitleBarButtons::closeButton),
+        parent(p)
+    {
+        setSize(100, 100);
+        setContentOwned(selector = new ColourSelector(), false);
+        
+        selector->addChangeListener(&parent);
+        
+        setResizable (true, false);
+        setResizeLimits (300, 400, 800, 1500);
+        setTopLeftPosition (60, 60);
+        
+        setVisible (true);
+    }
+    
+    void closeButtonPressed() override
+    {
+        parent.colourPicker.reset(nullptr);
+    }
+    
+    ColourSelector* selector;
+    MainComponent& parent;
+    
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ColourPickerWindow)
 };
 
 
 //==============================================================================
-MainComponent::MainComponent() : gridDisplay(10, 8, { "C", "B", "A", "G", "F", "E", "D", "C" })
+
+
+MainComponent::MainComponent(ValueTree& t) : tree(t), gridDisplay(tree, 8, 8, { "C", "B", "A", "G", "F", "E", "D", "C" })
 {
     setSize (800, 600);
 
     initializeAudioSettings();
     
-    visitComponents({ &playButton, &gridDisplay, &generateButton, &submitButton, &answerLabel, &infoButton },
-                    [this](Component& c){ addAndMakeVisible(c); });
+    visitComponents({
+        &playButton,
+        &gridDisplay,
+        &generateButton,
+        &submitButton,
+        &answerLabel,
+        &infoButton,
+        &colourPickButton
+    }, [this](Component& c){ addAndMakeVisible(c); });
+    
     
     playButton.onClick = [this]{
         audioSource.startPlaying(melody.noteLength, melody.timeBetweenNotes, melody.midiNotes);
@@ -54,7 +108,7 @@ MainComponent::MainComponent() : gridDisplay(10, 8, { "C", "B", "A", "G", "F", "
     };
     
     generateButton.onClick = [this]{
-        melody = melodyGenerator.generateMelody(10);
+        melody = melodyGenerator.generateMelody(8);
         gridDisplay.turnAllTilesOff();
         gridDisplay.setTile(gridDisplay.getNumColumns()-1, gridDisplay.getNumRows() - melody.normalizedGroundNoteIndex - 1, true);
         playButton.setButtonText("Start Playing");
@@ -65,11 +119,15 @@ MainComponent::MainComponent() : gridDisplay(10, 8, { "C", "B", "A", "G", "F", "
     };
     
     infoButton.onClick = [this]{
-        auto* infoPanel = new InfoComponent();
+        auto* infoPanel = new InfoPanelComponent();
         infoPanel->setSize(400, 200);
         CallOutBox::launchAsynchronously(infoPanel, infoButton.getScreenBounds(), nullptr);
-        
     };
+    
+    colourPickButton.onClick = [this]{
+        if(!colourPicker) colourPicker.reset(new ColourPickerWindow(*this));
+    };
+    
     
     answerLabel.setText("Answer will be shown here!", NotificationType::dontSendNotification);
     answerLabel.setJustificationType(Justification::centred);
@@ -126,9 +184,27 @@ void MainComponent::resized()
     visitComponents({ &playButton, &generateButton, &submitButton },
                     [&r](auto& c) { c.setBounds(r); r.translate(250, 0); });
     
-    gridDisplay.setBounds(getLocalBounds().reduced(50, 100));
+    gridDisplay.setBounds({ 52, 100, 696, 320 });
     
     answerLabel.setBounds(100, 500, 600, 100);
     infoButton.setBounds(10, 10, 25, 25);
     
+    colourPickButton.setBounds(50, 450, 200, 50);
+    
+}
+
+
+
+void MainComponent::changeListenerCallback(ChangeBroadcaster* broadcaster)
+{
+    if(broadcaster == colourPicker->selector)
+    {
+        if (tree.hasProperty(IDs::TileColour)){
+            print("tree has property tilecolour");
+            auto colour = colourPicker->selector->getCurrentColour().toString();
+            tree.setProperty(IDs::TileColour, colour, nullptr);
+        }
+        else
+            print("no property tilecolour");
+    }
 }

@@ -13,6 +13,13 @@
 #include "MidiGenerator.h"
 #include "Synth.h"
 
+/* Main audio source to use in the trainer.
+ * In the future this should become part of a generalized engine,
+ * toghether with the MelodyGenerator to have all sound related stuff linked together
+ * without any Component being the bridge..
+ */
+
+
 class TrainerAudioSource : public AudioSource
 {
 public:
