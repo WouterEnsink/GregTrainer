@@ -13,11 +13,25 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "Utility.h"
 
-struct IDs
-{
-    static const Identifier TileColour;
 
+
+struct IDs final
+{
+    static const inline Identifier TileColour = "TileColour";
+    
 };
+
+
+/*****************************************************************************************************/
+
+/* Converts the grid's state to a Melody that contains relative notes
+ * Midi notes are not inserted, because that is irrelevant for checking if the answer is correct
+ */
+
+class GridToMelodyConverter;
+class Melody;
+
+
 
 /*****************************************************************************************************/
 
@@ -54,6 +68,8 @@ public:
     
     void turnAllTilesOff() noexcept;
     
+    Melody getGridStateAsMelody() noexcept;
+    
     Rectangle<int> getBoundsForTile(int column, int row);
     
 private:
@@ -72,10 +88,13 @@ private:
         .get = [](auto v){ return v; }
     };
     
+    
     int numRows, numColumns;
     int halfSpaceBetweenTiles;
     
     Array<GridColumn*> gridColumns;
+        
+        std::unique_ptr<GridToMelodyConverter> gridToMelodyConverter;
     
     ValueTree tree;
     

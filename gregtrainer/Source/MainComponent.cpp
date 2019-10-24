@@ -1,7 +1,22 @@
 
 
 #include "MainComponent.h"
-#include "GridDisplayComponent.h"
+
+void compareRelativeMelodies(const Melody& actualMelody, const Melody& gridMelody)
+{
+    if (actualMelody.relativeNotes.size() != gridMelody.relativeNotes.size())
+        print("melodies not the same length");
+    
+    for (int i = 0; i < actualMelody.numNotes; ++i)
+    {
+        if (actualMelody.relativeNotes[i] != gridMelody.relativeNotes[i])
+        {
+            print("note", i, "not the same:", "actual note:", actualMelody.relativeNotes[i],
+                  "grid note:", gridMelody.relativeNotes[i]);
+        }
+        else print("note ", i, "is the same");
+    }
+}
 
 
 class InfoPanelComponent : public Component
@@ -116,6 +131,7 @@ MainComponent::MainComponent(ValueTree& t) : tree(t), gridDisplay(tree, 8, 8, { 
     
     submitButton.onClick = [this]{
         answerLabel.setText("You Suck", NotificationType::dontSendNotification);
+        compareRelativeMelodies(melody, gridDisplay.getGridStateAsMelody());
     };
     
     infoButton.onClick = [this]{
@@ -199,12 +215,10 @@ void MainComponent::changeListenerCallback(ChangeBroadcaster* broadcaster)
 {
     if(broadcaster == colourPicker->selector)
     {
-        if (tree.hasProperty(IDs::TileColour)){
-            print("tree has property tilecolour");
+        if (tree.hasProperty(IDs::TileColour))
+        {
             auto colour = colourPicker->selector->getCurrentColour().toString();
             tree.setProperty(IDs::TileColour, colour, nullptr);
         }
-        else
-            print("no property tilecolour");
     }
 }

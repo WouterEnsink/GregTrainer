@@ -29,6 +29,10 @@ auto visitComponents(const Array<Component*>& components, const Function& f) noe
     for(auto* c : components) f(*c);
 }
 
+/* Combined with structured bindings this provides a much cleaner and quicker
+ * way of getting x, y, w, h from some bounds for example
+ */
+
 template<typename T>
 auto getRectangleDimentions(const Rectangle<T>& r) noexcept
 {

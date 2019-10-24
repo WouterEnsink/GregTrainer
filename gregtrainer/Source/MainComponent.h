@@ -36,10 +36,10 @@ private:
     
     void initializeAudioSettings();
     
-    TextButton playButton { "Start Playing" };
-    TextButton generateButton { "Generate Melody" };
-    TextButton submitButton { "Submit Answer" };
-    TextButton infoButton { "i" };
+    TextButton playButton       { "Start Playing" };
+    TextButton generateButton   { "Generate Melody" };
+    TextButton submitButton     { "Submit Answer" };
+    TextButton infoButton       { "i" };
     TextButton colourPickButton { "Open Colour Picker" };
     
     Label answerLabel ;

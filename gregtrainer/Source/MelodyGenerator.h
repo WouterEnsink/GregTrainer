@@ -27,6 +27,8 @@ struct Melody final
 };
 
 
+
+
 /* MelodyGenerator is the source for all training material in the program
  *
  * In MelodyGenerator there are 3 terms for note, which makes things a little confusing

@@ -10,7 +10,44 @@
 
 #include "GridDisplayComponent.h"
 
-const Identifier IDs::TileColour = "TileColour";
+#include "MelodyGenerator.h"
+
+/* Converts the grid's state to a Melody that contains relative notes
+ * Midi notes are not inserted, because that is irrelevant for checking if the answer is correct
+ */
+
+class GridToMelodyConverter
+{
+public:
+    virtual ~GridToMelodyConverter() { }
+    
+    
+    virtual Melody convertGridToMelody(const Array<int>& gridState)
+    {
+        Melody melody;
+        auto size = gridState.size();
+        melody.relativeNotes.resize(size);
+        melody.numNotes = size;
+        
+        for(int i = 0; i < melody.relativeNotes.size(); ++i)
+            melody.relativeNotes.set(i, convertIndexToRelativeNote(gridState[i]));
+        
+        return melody;
+    }
+    
+private:
+    virtual int convertIndexToRelativeNote(int index)
+    {
+        print("index: ", index);
+        if(index < 0) return -1;
+        
+        //index 7 = c -> 0, index 6 = d -> 2, etc...
+        Array relativeNotes = { 12, 11, 9, 7, 5, 4, 2, 0 };
+        return relativeNotes[index];
+    }
+};
+
+/****************************************************************************************/
 
 
 class GridDisplayComponent::GridTileComponent     : public Component
@@ -211,6 +248,8 @@ GridDisplayComponent::GridDisplayComponent(ValueTree& t, int numColumns, int num
     
     gridColumns.resize(numColumns);
     
+    gridToMelodyConverter.reset(new GridToMelodyConverter);
+    
     for(auto& c : gridColumns)
     {
         c = new GridColumn(numRows);
@@ -220,11 +259,9 @@ GridDisplayComponent::GridDisplayComponent(ValueTree& t, int numColumns, int num
     
     setSpaceBetweenTiles(2);
     tree.addListener(this);
-    ValueTree child { IDs::TileColour };
-    Colour c = Colours::black;
     
+    Colour c = Colours::black;
     tree.setProperty(IDs::TileColour, c.toString(), nullptr);
-   // tree.appendChild(child, nullptr);
 }
 
 
@@ -281,7 +318,7 @@ void GridDisplayComponent::setSpaceBetweenTiles(int space) noexcept
 Array<int> GridDisplayComponent::getGridStates() const noexcept
 {
     Array<int> states;
-    states.resize(gridColumns.size());
+
     for(auto* c : gridColumns) states.add(c->getIndexActivatedTile());
     return states;
 }
@@ -330,8 +367,14 @@ void GridDisplayComponent::valueTreePropertyChanged(ValueTree& tree, const Ident
     {
         auto colourString = tree.getPropertyAsValue(IDs::TileColour, nullptr).toString();
         auto colour = Colour::fromString(colourString);
-        forEachTile([colour](GridTileComponent& tile){ tile.setTileOffColour(colour); });
+        forEachTile([colour] (GridTileComponent& tile) { tile.setTileOffColour(colour); });
     }
+}
+
+
+Melody GridDisplayComponent::getGridStateAsMelody() noexcept
+{
+    return gridToMelodyConverter->convertGridToMelody(getGridStates());
 }
 
 /*******************************************************************************************/
