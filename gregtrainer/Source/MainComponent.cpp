@@ -2,6 +2,10 @@
 
 #include "MainComponent.h"
 
+/** compares two melodies, should probably be put in a class that also handles giving visual feedback
+ ** to the user
+ */
+
 void compareRelativeMelodies(const Melody& actualMelody, const Melody& gridMelody)
 {
     if (actualMelody.relativeNotes.size() != gridMelody.relativeNotes.size())
@@ -125,8 +129,13 @@ MainComponent::MainComponent(ValueTree& t) : tree(t), gridDisplay(tree, 8, 8, { 
     generateButton.onClick = [this]{
         melody = melodyGenerator.generateMelody(8);
         gridDisplay.turnAllTilesOff();
-        gridDisplay.setTile(gridDisplay.getNumColumns()-1, gridDisplay.getNumRows() - melody.normalizedGroundNoteIndex - 1, true);
+        gridDisplay.setStateForTile(gridDisplay.getNumColumns()-1,
+                                    gridDisplay.getNumRows() - melody.normalizedGroundNoteIndex - 1,
+                                    GridDisplayComponent::TileState::tileActive);
+        
         playButton.setButtonText("Start Playing");
+        
+        
     };
     
     submitButton.onClick = [this]{
@@ -187,7 +196,7 @@ void MainComponent::initializeAudioSettings()
 //==============================================================================
 void MainComponent::paint (Graphics& g)
 {
-    g.fillAll (Colours::lightslategrey);
+    g.fillAll (Colours::black);
 }
 
 void MainComponent::resized()
@@ -219,6 +228,7 @@ void MainComponent::changeListenerCallback(ChangeBroadcaster* broadcaster)
         {
             auto colour = colourPicker->selector->getCurrentColour().toString();
             tree.setProperty(IDs::TileColour, colour, nullptr);
+            
         }
     }
 }

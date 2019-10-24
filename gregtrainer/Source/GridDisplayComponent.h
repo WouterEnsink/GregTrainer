@@ -12,13 +12,13 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "Utility.h"
-
+#include "MelodyGenerator.h"
 
 
 struct IDs final
 {
     static const inline Identifier TileColour = "TileColour";
-    
+    static const inline Identifier GridState  = "GridState";
 };
 
 
@@ -47,6 +47,17 @@ public:
     
     ~GridDisplayComponent();
     
+    enum class TileState
+    {
+        tileActive,
+        tileInactive,
+        tileWrongAnswer,
+        tileRightAnswer
+    };
+    
+    static String tileStateToString(TileState state);
+    static TileState stringToTileState(String);
+    
     void paint(Graphics& g) override;
     
     void resized() override;
@@ -56,7 +67,7 @@ public:
     /* returns array with wich row is on in each column */
     Array<int> getGridStates() const noexcept;
     
-    void setTile(int column, int row, bool on) noexcept;
+    void setStateForTile(int column, int row, TileState on) noexcept;
     
     void setSetabilityTile(int column, int row, bool settable) noexcept;
     
@@ -72,10 +83,17 @@ public:
     
     Rectangle<int> getBoundsForTile(int column, int row);
     
+    static Identifier tileIndexToIdentifier(int column, int row);
+    
+    String getGridStateAsString();
+    
+    static std::tuple<int, int> tileIndexFromIdentifier(Identifier);
+    
 private:
     
     class GridTileComponent;
     class GridColumn;
+  //  class AnswerChecker;
     
     void forEachTile(const std::function<void(GridTileComponent&)>&) noexcept;
     
@@ -94,7 +112,8 @@ private:
     
     Array<GridColumn*> gridColumns;
         
-        std::unique_ptr<GridToMelodyConverter> gridToMelodyConverter;
+    std::unique_ptr<GridToMelodyConverter> gridToMelodyConverter;
+   // AnswerChecker answerChecker;
     
     ValueTree tree;
     
