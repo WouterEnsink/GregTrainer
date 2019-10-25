@@ -20,6 +20,9 @@ struct IDs final
     {
         DECLARE_ID(TileColour,  "TileColour");
         DECLARE_ID(GridState,   "GridState");
+        DECLARE_ID(TilePointer, "TilePointer");
+        DECLARE_ID(TileState,   "TileState");
+        DECLARE_ID(TileSetable, "TileSetable");
     };
     
     struct Engine final

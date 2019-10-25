@@ -49,7 +49,7 @@ public:
     };
     
     static String tileStateToString(TileState state);
-    static TileState stringToTileState(String);
+    static TileState tileStateFromString(String);
     
     void paint(Graphics& g) override;
     
@@ -78,27 +78,27 @@ public:
     
     static Identifier tileIndexToIdentifier(int column, int row);
     
-    String getGridStateAsString();
-    
     static std::tuple<int, int> tileIndexFromIdentifier(Identifier);
     
 private:
     
     class GridTileComponent;
-    class GridColumn;
     
-    void forEachTile(const std::function<void(GridTileComponent&)>&) noexcept;
+    void turnOffAllRowsInColumnExceptThisOne(int column, int row);
     
     void valueTreePropertyChanged(ValueTree&, const Identifier&) override;
     
     int spaceBetweenTiles, halfSpaceBetweenTiles;
     int numRows, numColumns;
     
-    Array<GridColumn*> gridColumns;
-        
     std::unique_ptr<GridToMelodyConverter> gridToMelodyConverter;
     
     ValueTree tree;
+    
+    OwnedArray<OwnedArray<GridTileComponent>> tiles;
+    
+    // all Identifiers are predefined, to safe processing power
+    Array<Array<Identifier>> tileIdentifiers;
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(GridDisplayComponent)
     
