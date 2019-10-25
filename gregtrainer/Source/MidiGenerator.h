@@ -38,6 +38,7 @@ public:
         notesToPlay = notes;
     }
     
+    // set note length needs to be called after this one
     void setTimeBetweenNotes(int timeInMs) noexcept
     {
         timeBetweenNotes = timeInMs;
@@ -61,7 +62,7 @@ public:
     
     void stopPlaying() noexcept
     {
-        
+        // should stop somehow
     }
     
     int getNextMidiNoteOn() noexcept
@@ -117,4 +118,5 @@ private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MidiGenerator)
     
 };
+
 

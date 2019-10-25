@@ -138,9 +138,10 @@
     <Lib/>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\Source\Main.cpp"/>
     <ClCompile Include="..\..\Source\GridDisplayComponent.cpp"/>
     <ClCompile Include="..\..\Source\MainComponent.cpp"/>
-    <ClCompile Include="..\..\Source\Main.cpp"/>
+    <ClCompile Include="..\..\Source\TrainerEngine.cpp"/>
     <ClCompile Include="C:\JUCE\modules\juce_audio_basics\buffers\juce_AudioChannelSet.cpp">
       <ExcludedFromBuild>true</ExcludedFromBuild>
     </ClCompile>
@@ -1909,13 +1910,16 @@
     <ClCompile Include="..\..\JuceLibraryCode\include_juce_opengl.cpp"/>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\Source\MelodyGenerator.h"/>
+    <ClInclude Include="..\..\Source\Identifiers.h"/>
     <ClInclude Include="..\..\Source\Utility.h"/>
+    <ClInclude Include="..\..\Source\ExtraMenus.h"/>
+    <ClInclude Include="..\..\Source\GridDisplayComponent.h"/>
+    <ClInclude Include="..\..\Source\MainComponent.h"/>
+    <ClInclude Include="..\..\Source\TrainerEngine.h"/>
+    <ClInclude Include="..\..\Source\MelodyGenerator.h"/>
     <ClInclude Include="..\..\Source\TrainerAudioSource.h"/>
     <ClInclude Include="..\..\Source\MidiGenerator.h"/>
     <ClInclude Include="..\..\Source\Synth.h"/>
-    <ClInclude Include="..\..\Source\GridDisplayComponent.h"/>
-    <ClInclude Include="..\..\Source\MainComponent.h"/>
     <ClInclude Include="C:\JUCE\modules\juce_audio_basics\audio_play_head\juce_AudioPlayHead.h"/>
     <ClInclude Include="C:\JUCE\modules\juce_audio_basics\buffers\juce_AudioChannelSet.h"/>
     <ClInclude Include="C:\JUCE\modules\juce_audio_basics\buffers\juce_AudioDataConverters.h"/>

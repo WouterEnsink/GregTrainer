@@ -6,9 +6,10 @@
 #include "GridDisplayComponent.h"
 #include "TrainerAudioSource.h"
 #include "MelodyGenerator.h"
+#include "TrainerEngine.h"
+#include "ExtraMenus.h"
 
-
-class MainComponent   : public AudioAppComponent, public ChangeListener
+class MainComponent   : public AudioAppComponent
 {
 public:
     //==============================================================================
@@ -25,13 +26,11 @@ public:
     void resized() override;
     //==============================================================================
     
-    void changeListenerCallback(ChangeBroadcaster*) override;
     
     
 private:
     //==============================================================================
     
-    class ColourPickerWindow;
     std::unique_ptr<ColourPickerWindow> colourPicker;
     
     void initializeAudioSettings();
@@ -44,14 +43,11 @@ private:
     
     Label answerLabel ;
     
-    MelodyGenerator melodyGenerator;
-    Melody melody;
-    
-    TrainerAudioSource audioSource;
-    
     ValueTree tree;
 
     GridDisplayComponent gridDisplay;
+    
+    TrainerEngine trainerEngine;
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainComponent)
 };

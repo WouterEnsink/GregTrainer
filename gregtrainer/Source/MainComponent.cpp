@@ -1,6 +1,7 @@
 
 
 #include "MainComponent.h"
+#include "Identifiers.h"
 
 /** compares two melodies, should probably be put in a class that also handles giving visual feedback
  ** to the user
@@ -23,88 +24,11 @@ void compareRelativeMelodies(const Melody& actualMelody, const Melody& gridMelod
 }
 
 
-class InfoPanelComponent : public Component
-{
-public:
-    InfoPanelComponent()
-    {
-        addAndMakeVisible(emailLink);
-        Font fond { "Arial", 25.f, Font::plain };
-        emailLink.setFont(fond, false);
-        emailLink.setColour(HyperlinkButton::textColourId, Colours::blue);
-    }
-    
-    void paint(Graphics& g) override
-    {
-        g.fillAll(Colours::lightslategrey);
-        g.setColour(Colours::black);
-        g.setFont(30.f);
-        
-        g.drawText("Author: Wouter Ensink",
-                   getLocalBounds().toFloat().withTrimmedBottom(getHeight()/2),
-                   Justification::centred);
-        
-        g.setFont(25.f);
-        
-        auto bounds = getLocalBounds().toFloat();
-        
-        auto textBounds = bounds.withTrimmedTop(getHeight()/3).withTrimmedBottom(getHeight()/3);
-        
-        g.drawText("Send Bugs or Requests to:",
-                   textBounds.translated(0, getHeight()/6),
-                   Justification::horizontallyCentred);
-    }
-    
-    void resized() override
-    {
-        auto bounds = getLocalBounds().withTrimmedTop(getHeight()/3).withTrimmedBottom(getHeight()/3);
-        emailLink.setBounds(bounds.translated(0, getHeight()/3));
-    }
-    
-    HyperlinkButton emailLink { "wouter.ensink@student.hku.nl", { "wouter.ensink@student.hku.nl" } };
-};
-
-//==============================================================================
-
-/** Colour Picker to set the colour of the grid
- */
-
-class MainComponent::ColourPickerWindow : public DocumentWindow
-{
-public:
-    
-    ColourPickerWindow(MainComponent& p) :
-        DocumentWindow("Colour Picker", Colours::black, TitleBarButtons::closeButton),
-        parent(p)
-    {
-        setSize(100, 100);
-        setContentOwned(selector = new ColourSelector(), false);
-        
-        selector->addChangeListener(&parent);
-        
-        setResizable (true, false);
-        setResizeLimits (300, 400, 800, 1500);
-        setTopLeftPosition (60, 60);
-        
-        setVisible (true);
-    }
-    
-    void closeButtonPressed() override
-    {
-        parent.colourPicker.reset(nullptr);
-    }
-    
-    ColourSelector* selector;
-    MainComponent& parent;
-    
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ColourPickerWindow)
-};
-
-
 //==============================================================================
 
 
-MainComponent::MainComponent(ValueTree& t) : tree(t), gridDisplay(tree, 8, 8, { "C", "B", "A", "G", "F", "E", "D", "C" })
+MainComponent::MainComponent(ValueTree& t) :
+    tree(t), gridDisplay(tree, 8, 8, { "C", "B", "A", "G", "F", "E", "D", "C" }), trainerEngine(tree)
 {
     setSize (800, 600);
 
@@ -122,17 +46,18 @@ MainComponent::MainComponent(ValueTree& t) : tree(t), gridDisplay(tree, 8, 8, { 
     
     
     playButton.onClick = [this]{
-        audioSource.startPlaying(melody.noteLength, melody.timeBetweenNotes, melody.midiNotes);
+        //audioSource.startPlaying(melody.noteLength, melody.timeBetweenNotes, melody.midiNotes);
+        trainerEngine.startPlayingMelody();
         playButton.setButtonText("Play Again");
     };
     
     generateButton.onClick = [this]{
-        melody = melodyGenerator.generateMelody(8);
+       // melody = melodyGenerator.generateMelody(8);
         gridDisplay.turnAllTilesOff();
-        gridDisplay.setStateForTile(gridDisplay.getNumColumns()-1,
-                                    gridDisplay.getNumRows() - melody.normalizedGroundNoteIndex - 1,
-                                    GridDisplayComponent::TileState::tileActive);
-        
+      //  gridDisplay.setStateForTile(gridDisplay.getNumColumns()-1,
+      //                              gridDisplay.getNumRows() - melody.normalizedGroundNoteIndex - 1,
+      //                              GridDisplayComponent::TileState::tileActive);
+        trainerEngine.generateNextMelody();
         playButton.setButtonText("Start Playing");
         
         
@@ -140,7 +65,7 @@ MainComponent::MainComponent(ValueTree& t) : tree(t), gridDisplay(tree, 8, 8, { 
     
     submitButton.onClick = [this]{
         answerLabel.setText("You Suck", NotificationType::dontSendNotification);
-        compareRelativeMelodies(melody, gridDisplay.getGridStateAsMelody());
+       // compareRelativeMelodies(melody, gridDisplay.getGridStateAsMelody());
     };
     
     infoButton.onClick = [this]{
@@ -150,7 +75,7 @@ MainComponent::MainComponent(ValueTree& t) : tree(t), gridDisplay(tree, 8, 8, { 
     };
     
     colourPickButton.onClick = [this]{
-        if(!colourPicker) colourPicker.reset(new ColourPickerWindow(*this));
+        if(!colourPicker) colourPicker.reset(new ColourPickerWindow(tree, [this]{ colourPicker = nullptr; }));
     };
     
     
@@ -166,17 +91,17 @@ MainComponent::~MainComponent()
 //==============================================================================
 void MainComponent::prepareToPlay (int samplesPerBlockExpected, double sampleRate)
 {
-    audioSource.prepareToPlay(samplesPerBlockExpected, sampleRate);
+    trainerEngine.prepareToPlay(samplesPerBlockExpected, sampleRate);
 }
 
 void MainComponent::getNextAudioBlock (const AudioSourceChannelInfo& bufferToFill)
 {
-    audioSource.getNextAudioBlock(bufferToFill);
+    trainerEngine.getNextAudioBlock(bufferToFill);
 }
 
 void MainComponent::releaseResources()
 {
-    audioSource.releaseResources();
+    trainerEngine.releaseResources();
 }
 
 void MainComponent::initializeAudioSettings()
@@ -219,15 +144,3 @@ void MainComponent::resized()
 }
 
 
-
-void MainComponent::changeListenerCallback(ChangeBroadcaster* broadcaster)
-{
-    if(broadcaster == colourPicker->selector)
-    {
-        if (tree.hasProperty(IDs::TileColour))
-        {
-            auto colour = colourPicker->selector->getCurrentColour().toString();
-            tree.setProperty(IDs::TileColour, colour, nullptr);
-        }
-    }
-}

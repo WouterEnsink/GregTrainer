@@ -15,11 +15,6 @@
 #include "MelodyGenerator.h"
 
 
-struct IDs final
-{
-    static const inline Identifier TileColour = "TileColour";
-    static const inline Identifier GridState  = "GridState";
-};
 
 
 /*****************************************************************************************************/
@@ -29,8 +24,6 @@ struct IDs final
  */
 
 class GridToMelodyConverter;
-class Melody;
-
 
 
 /*****************************************************************************************************/
@@ -64,7 +57,7 @@ public:
     
     void setSpaceBetweenTiles(int space) noexcept;
     
-    /* returns array with wich row is on in each column */
+    // returns array with wich row is on in each column
     Array<int> getGridStates() const noexcept;
     
     void setStateForTile(int column, int row, TileState on) noexcept;
@@ -93,27 +86,17 @@ private:
     
     class GridTileComponent;
     class GridColumn;
-  //  class AnswerChecker;
     
     void forEachTile(const std::function<void(GridTileComponent&)>&) noexcept;
     
     void valueTreePropertyChanged(ValueTree&, const Identifier&) override;
     
-    /* this property also computes the value for halfSpaceBetweenTiles */
-    Property<int> spaceBetweenTiles {
-        .value = 0,
-        .set = [this](auto v){ halfSpaceBetweenTiles = v/2; return v; },
-        .get = [](auto v){ return v; }
-    };
-    
-    
+    int spaceBetweenTiles, halfSpaceBetweenTiles;
     int numRows, numColumns;
-    int halfSpaceBetweenTiles;
     
     Array<GridColumn*> gridColumns;
         
     std::unique_ptr<GridToMelodyConverter> gridToMelodyConverter;
-   // AnswerChecker answerChecker;
     
     ValueTree tree;
     

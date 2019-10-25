@@ -27,6 +27,7 @@ struct SineWaveSound   : public SynthesiserSound
 };
 
 //==============================================================================
+
 struct SineWaveVoice   : public SynthesiserVoice
 {
     SineWaveVoice() {}
@@ -115,3 +116,63 @@ private:
 };
 
 
+
+//==============================================================================
+// to make use of more generic audio processors possible in the engine
+
+class InternalProcessorBase  : public AudioProcessor
+{
+public:
+    AudioProcessorEditor* createEditor() override { return nullptr; }
+    bool hasEditor() const override { return false; }
+    int getNumPrograms () override { return 0; }
+    int getCurrentProgram () override { return 0; }
+    void setCurrentProgram (int index) override { }
+    const String getProgramName (int index) override { return "InternalProcessor"; }
+    void changeProgramName (int index, const String &newName) override { }
+    void getStateInformation (MemoryBlock &destData) override { }
+    void setStateInformation (const void *data, int sizeInBytes) override { }
+    
+    double getTailLengthSeconds () const override { return 0.0; }
+    bool acceptsMidi () const override { return true; }
+    bool producesMidi () const override { return false; }
+    
+    const String getName () const override { return "InternalProcessor"; }
+    
+    void prepareToPlay (double sampleRate, int maximumExpectedSamplesPerBlock) override { }
+    void releaseResources () override { }
+    void processBlock (AudioBuffer< float > &buffer, MidiBuffer &midiMessages) override { }
+};
+
+
+//==============================================================================
+
+class SineWaveSynthesizer   : public InternalProcessorBase
+{
+public:
+    
+    SineWaveSynthesizer()
+    {
+        synth.addVoice(new SineWaveVoice());
+        synth.addSound(new SineWaveSound());
+    }
+    
+    void prepareToPlay (double sampleRate, int maximumExpectedSamplesPerBlock) override
+    {
+        synth.setCurrentPlaybackSampleRate(sampleRate);
+    }
+    
+    void releaseResources () override
+    {
+        
+    }
+    
+    void processBlock (AudioBuffer<float>& buffer, MidiBuffer& midiMessages) override
+    {
+        synth.renderNextBlock(buffer, midiMessages, 0, buffer.getNumSamples());
+    }
+    
+private:
+    
+    Synthesiser synth;
+};

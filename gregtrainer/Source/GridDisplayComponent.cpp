@@ -9,7 +9,7 @@
 */
 
 #include "GridDisplayComponent.h"
-
+#include "Identifiers.h"
 #include "MelodyGenerator.h"
 
 /* Converts the grid's state to a Melody that contains relative notes
@@ -206,7 +206,7 @@ private:
         }
     }
 
-    ValueTree& valueTree;
+    ValueTree valueTree;
     Identifier tileIdentifier;
     
     Font noteFont { "Arial", 30.f, Font::plain };
@@ -350,7 +350,7 @@ GridDisplayComponent::GridDisplayComponent(ValueTree& t, int numColumns, int num
     tree.addListener(this);
     
     Colour c = Colours::black;
-    tree.setProperty(IDs::TileColour, c.toString(), nullptr);
+    tree.setProperty(IDs::Grid::TileColour, c.toString(), nullptr);
 }
 
 
@@ -399,6 +399,7 @@ void GridDisplayComponent::resized()
 void GridDisplayComponent::setSpaceBetweenTiles(int space) noexcept
 {
     spaceBetweenTiles = space;
+    halfSpaceBetweenTiles = space/2;
     repaint();
 }
 
@@ -453,9 +454,9 @@ void GridDisplayComponent::forEachTile(const std::function<void (GridTileCompone
 
 void GridDisplayComponent::valueTreePropertyChanged(ValueTree& tree, const Identifier& id)
 {
-    if(id == IDs::TileColour)
+    if(id == IDs::Grid::TileColour)
     {
-        auto colourString = tree.getPropertyAsValue(IDs::TileColour, nullptr).toString();
+        auto colourString = tree.getPropertyAsValue(IDs::Grid::TileColour, nullptr).toString();
         auto colour = Colour::fromString(colourString);
         forEachTile([colour] (GridTileComponent& tile) { tile.setColourForTileState(TileState::tileInactive, colour); });
     }

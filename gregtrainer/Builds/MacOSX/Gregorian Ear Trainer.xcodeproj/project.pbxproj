@@ -61,6 +61,10 @@
 			isa = PBXBuildFile;
 			fileRef = B975AAC64EE0B1A8DC7E24D6;
 		};
+		F8D113335DAEEA0E3A1157E2 = {
+			isa = PBXBuildFile;
+			fileRef = B7DA2E5E4CF7A322F2619AAE;
+		};
 		64D4C8C2D0ACC1EE948CB86D = {
 			isa = PBXBuildFile;
 			fileRef = 816D1ACFAEDE6696DDEFD850;
@@ -69,9 +73,9 @@
 			isa = PBXBuildFile;
 			fileRef = 6C4B7E035348AE2867296B35;
 		};
-		F8D113335DAEEA0E3A1157E2 = {
+		9397DC007B308E84C7386520 = {
 			isa = PBXBuildFile;
-			fileRef = B7DA2E5E4CF7A322F2619AAE;
+			fileRef = 47E6C5F2D737BC72812DC064;
 		};
 		6FFE9E9DA3B79036400D34D4 = {
 			isa = PBXBuildFile;
@@ -234,6 +238,13 @@
 			path = ../../JuceLibraryCode/JuceHeader.h;
 			sourceTree = "SOURCE_ROOT";
 		};
+		47E6C5F2D737BC72812DC064 = {
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			name = TrainerEngine.cpp;
+			path = ../../Source/TrainerEngine.cpp;
+			sourceTree = "SOURCE_ROOT";
+		};
 		482974A5BE4126BC1C6BB69C = {
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.cpp.objcpp;
@@ -304,6 +315,13 @@
 			path = "../../JuceLibraryCode/include_juce_audio_formats.mm";
 			sourceTree = "SOURCE_ROOT";
 		};
+		6175F7468FF2A8B9E2C73FFE = {
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = TrainerEngine.h;
+			path = ../../Source/TrainerEngine.h;
+			sourceTree = "SOURCE_ROOT";
+		};
 		6C4B7E035348AE2867296B35 = {
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.cpp.cpp;
@@ -331,6 +349,13 @@
 			includeInIndex = 0;
 			path = "Gregorian Ear Trainer.app";
 			sourceTree = "BUILT_PRODUCTS_DIR";
+		};
+		773B215C96C60482F4C2CFC4 = {
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = Identifiers.h;
+			path = ../../Source/Identifiers.h;
+			sourceTree = "SOURCE_ROOT";
 		};
 		7C5459042E567FFEFEEEB84C = {
 			isa = PBXFileReference;
@@ -380,6 +405,13 @@
 			name = IOKit.framework;
 			path = System/Library/Frameworks/IOKit.framework;
 			sourceTree = SDKROOT;
+		};
+		9B8F28BFF69C5AB98A652702 = {
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = ExtraMenus.h;
+			path = ../../Source/ExtraMenus.h;
+			sourceTree = "SOURCE_ROOT";
 		};
 		9CE3B17A5B4161A090061214 = {
 			isa = PBXFileReference;
@@ -521,19 +553,47 @@
 			path = "../../JuceLibraryCode/include_juce_audio_utils.mm";
 			sourceTree = "SOURCE_ROOT";
 		};
-		6F76ADA74C13F13D005CD7F7 = {
+		EFD8B7BC913B8F464D77A5DF = {
 			isa = PBXGroup;
 			children = (
-				816D1ACFAEDE6696DDEFD850,
-				908CCF82A614FB5179166227,
+				773B215C96C60482F4C2CFC4,
 				E0F6967C993EB672CD3C7E35,
-				BE9D1C2DDDC26AD625A2BAE3,
-				129BDE1600E419BED28FDBD0,
-				32D89AB3E1CDA1837C4C3581,
+				B7DA2E5E4CF7A322F2619AAE,
+			);
+			name = Global;
+			sourceTree = "<group>";
+		};
+		64C169570B74333181C9A6E7 = {
+			isa = PBXGroup;
+			children = (
+				9B8F28BFF69C5AB98A652702,
+				816D1ACFAEDE6696DDEFD850,
 				9CE3B17A5B4161A090061214,
 				7C5459042E567FFEFEEEB84C,
 				6C4B7E035348AE2867296B35,
-				B7DA2E5E4CF7A322F2619AAE,
+			);
+			name = UserInterface;
+			sourceTree = "<group>";
+		};
+		E0065661C1FAF588491141D8 = {
+			isa = PBXGroup;
+			children = (
+				47E6C5F2D737BC72812DC064,
+				6175F7468FF2A8B9E2C73FFE,
+				908CCF82A614FB5179166227,
+				BE9D1C2DDDC26AD625A2BAE3,
+				129BDE1600E419BED28FDBD0,
+				32D89AB3E1CDA1837C4C3581,
+			);
+			name = Engine;
+			sourceTree = "<group>";
+		};
+		6F76ADA74C13F13D005CD7F7 = {
+			isa = PBXGroup;
+			children = (
+				EFD8B7BC913B8F464D77A5DF,
+				64C169570B74333181C9A6E7,
+				E0065661C1FAF588491141D8,
 			);
 			name = Source;
 			sourceTree = "<group>";
@@ -850,9 +910,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F8D113335DAEEA0E3A1157E2,
 				64D4C8C2D0ACC1EE948CB86D,
 				C67EF921CD491E279B01A851,
-				F8D113335DAEEA0E3A1157E2,
+				9397DC007B308E84C7386520,
 				6FFE9E9DA3B79036400D34D4,
 				A39D4F6E9CA164C367D3F87F,
 				6BE04217B68041728A7A3331,

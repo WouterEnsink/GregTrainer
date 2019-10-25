@@ -2,6 +2,15 @@
 
 <Project ToolsVersion="16.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
+    <Filter Include="Gregorian Ear Trainer\Source\Global">
+      <UniqueIdentifier>{D3252BC9-6B1C-05FF-5A59-5DF3F6CBE32A}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Gregorian Ear Trainer\Source\UserInterface">
+      <UniqueIdentifier>{943AF215-F7B7-E292-0A9F-C2224938856F}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Gregorian Ear Trainer\Source\Engine">
+      <UniqueIdentifier>{8597A93D-101A-483B-B371-F0AD69005FBE}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Gregorian Ear Trainer\Source">
       <UniqueIdentifier>{7956C8AA-C2DF-EC7A-53BA-7C61CEE3CEE9}</UniqueIdentifier>
     </Filter>
@@ -412,14 +421,17 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\Source\Main.cpp">
+      <Filter>Gregorian Ear Trainer\Source\Global</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\Source\GridDisplayComponent.cpp">
-      <Filter>Gregorian Ear Trainer\Source</Filter>
+      <Filter>Gregorian Ear Trainer\Source\UserInterface</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\MainComponent.cpp">
-      <Filter>Gregorian Ear Trainer\Source</Filter>
+      <Filter>Gregorian Ear Trainer\Source\UserInterface</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\Main.cpp">
-      <Filter>Gregorian Ear Trainer\Source</Filter>
+    <ClCompile Include="..\..\Source\TrainerEngine.cpp">
+      <Filter>Gregorian Ear Trainer\Source\Engine</Filter>
     </ClCompile>
     <ClCompile Include="C:\JUCE\modules\juce_audio_basics\buffers\juce_AudioChannelSet.cpp">
       <Filter>JUCE Modules\juce_audio_basics\buffers</Filter>
@@ -2334,26 +2346,35 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\Source\MelodyGenerator.h">
-      <Filter>Gregorian Ear Trainer\Source</Filter>
+    <ClInclude Include="..\..\Source\Identifiers.h">
+      <Filter>Gregorian Ear Trainer\Source\Global</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\Utility.h">
-      <Filter>Gregorian Ear Trainer\Source</Filter>
+      <Filter>Gregorian Ear Trainer\Source\Global</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\TrainerAudioSource.h">
-      <Filter>Gregorian Ear Trainer\Source</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Source\MidiGenerator.h">
-      <Filter>Gregorian Ear Trainer\Source</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Source\Synth.h">
-      <Filter>Gregorian Ear Trainer\Source</Filter>
+    <ClInclude Include="..\..\Source\ExtraMenus.h">
+      <Filter>Gregorian Ear Trainer\Source\UserInterface</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\GridDisplayComponent.h">
-      <Filter>Gregorian Ear Trainer\Source</Filter>
+      <Filter>Gregorian Ear Trainer\Source\UserInterface</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\MainComponent.h">
-      <Filter>Gregorian Ear Trainer\Source</Filter>
+      <Filter>Gregorian Ear Trainer\Source\UserInterface</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\TrainerEngine.h">
+      <Filter>Gregorian Ear Trainer\Source\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\MelodyGenerator.h">
+      <Filter>Gregorian Ear Trainer\Source\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\TrainerAudioSource.h">
+      <Filter>Gregorian Ear Trainer\Source\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\MidiGenerator.h">
+      <Filter>Gregorian Ear Trainer\Source\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Synth.h">
+      <Filter>Gregorian Ear Trainer\Source\Engine</Filter>
     </ClInclude>
     <ClInclude Include="C:\JUCE\modules\juce_audio_basics\audio_play_head\juce_AudioPlayHead.h">
       <Filter>JUCE Modules\juce_audio_basics\audio_play_head</Filter>

@@ -4,23 +4,34 @@
               jucerVersion="5.4.4" cppLanguageStandard="17">
   <MAINGROUP id="x0YCOc" name="Gregorian Ear Trainer">
     <GROUP id="{DC53F2B4-7995-6CD5-BCDE-9DE2CF7E9ACF}" name="Source">
-      <FILE id="p6E7zd" name="GridDisplayComponent.cpp" compile="1" resource="0"
-            file="Source/GridDisplayComponent.cpp"/>
-      <FILE id="KXPbtM" name="MelodyGenerator.h" compile="0" resource="0"
-            file="Source/MelodyGenerator.h"/>
-      <FILE id="CPKMa8" name="Utility.h" compile="0" resource="0" file="Source/Utility.h"/>
-      <FILE id="NtPRkw" name="TrainerAudioSource.h" compile="0" resource="0"
-            file="Source/TrainerAudioSource.h"/>
-      <FILE id="WZShCK" name="MidiGenerator.h" compile="0" resource="0" file="Source/MidiGenerator.h"/>
-      <FILE id="OlRCwg" name="Synth.h" compile="0" resource="0" file="Source/Synth.h"/>
-      <FILE id="RETnEY" name="GridDisplayComponent.h" compile="0" resource="0"
-            file="Source/GridDisplayComponent.h"/>
-      <FILE id="AmZOdX" name="MainComponent.h" compile="0" resource="0" file="Source/MainComponent.h"/>
-      <FILE id="lUwVYR" name="MainComponent.cpp" compile="1" resource="0"
-            file="Source/MainComponent.cpp"/>
-      <FILE id="HFH18H" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
+      <GROUP id="{056EC417-04DF-46CC-E190-8483630A0354}" name="Global">
+        <FILE id="Lm2dli" name="Identifiers.h" compile="0" resource="0" file="Source/Identifiers.h"/>
+        <FILE id="CPKMa8" name="Utility.h" compile="0" resource="0" file="Source/Utility.h"/>
+        <FILE id="HFH18H" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
+      </GROUP>
+      <GROUP id="{55C52031-0368-5365-8244-59EE81918687}" name="UserInterface">
+        <FILE id="UcAx50" name="ExtraMenus.h" compile="0" resource="0" file="Source/ExtraMenus.h"/>
+        <FILE id="p6E7zd" name="GridDisplayComponent.cpp" compile="1" resource="0"
+              file="Source/GridDisplayComponent.cpp"/>
+        <FILE id="RETnEY" name="GridDisplayComponent.h" compile="0" resource="0"
+              file="Source/GridDisplayComponent.h"/>
+        <FILE id="AmZOdX" name="MainComponent.h" compile="0" resource="0" file="Source/MainComponent.h"/>
+        <FILE id="lUwVYR" name="MainComponent.cpp" compile="1" resource="0"
+              file="Source/MainComponent.cpp"/>
+      </GROUP>
+      <GROUP id="{5E04B6C1-E8EF-9C69-3396-76633A9B342E}" name="Engine">
+        <FILE id="jkT34E" name="TrainerEngine.cpp" compile="1" resource="0"
+              file="Source/TrainerEngine.cpp"/>
+        <FILE id="J1XduX" name="TrainerEngine.h" compile="0" resource="0" file="Source/TrainerEngine.h"/>
+        <FILE id="KXPbtM" name="MelodyGenerator.h" compile="0" resource="0"
+              file="Source/MelodyGenerator.h"/>
+        <FILE id="NtPRkw" name="TrainerAudioSource.h" compile="0" resource="0"
+              file="Source/TrainerAudioSource.h"/>
+        <FILE id="WZShCK" name="MidiGenerator.h" compile="0" resource="0" file="Source/MidiGenerator.h"/>
+        <FILE id="OlRCwg" name="Synth.h" compile="0" resource="0" file="Source/Synth.h"/>
+      </GROUP>
     </GROUP>
-    <FILE id="HHVwTK" name="icon.icns" compile="0" resource="1" file="res/icon.icns"/>
+    <FILE id="qQ8Xk1" name="icon.icns" compile="0" resource="1" file="res/icon.icns"/>
   </MAINGROUP>
   <EXPORTFORMATS>
     <XCODE_MAC targetFolder="Builds/MacOSX">

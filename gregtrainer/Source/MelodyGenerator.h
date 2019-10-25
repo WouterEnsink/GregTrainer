@@ -65,6 +65,12 @@ public:
         };
     }
     
+    void setNumNotesInMelody(int num)
+    {
+        numNotes = num;
+    }
+    
+    Melody generateMelody() { return generateMelody(numNotes); }
     
     String getRandomMode() noexcept { return modes[random.nextInt(modes.size())]; }
     
@@ -126,7 +132,7 @@ public:
     Random random;
     
     const Array<String> modes { "D", "E", "F", "G" };
-    
+    int numNotes;
     const Array<int> normalizedMidiNoteDistances = { 0, 2, 4, 5, 7, 9, 11 };
     const Array<String> noteNames { "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" };
 };
