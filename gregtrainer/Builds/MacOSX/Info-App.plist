@@ -8,11 +8,11 @@
     <key>CFBundleIconFile</key>
     <string></string>
     <key>CFBundleIdentifier</key>
-    <string>com.yourcompany.GregTrainer</string>
+    <string>com.yourcompany.GregorianEarTrainer</string>
     <key>CFBundleName</key>
-    <string>GregTrainer</string>
+    <string>Gregorian Ear Trainer</string>
     <key>CFBundleDisplayName</key>
-    <string>GregTrainer</string>
+    <string>Gregorian Ear Trainer</string>
     <key>CFBundlePackageType</key>
     <string>APPL</string>
     <key>CFBundleSignature</key>

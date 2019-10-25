@@ -13,9 +13,9 @@ BEGIN
   BEGIN
     BLOCK "040904E4"
     BEGIN
-      VALUE "FileDescription",  "GregTrainer\0"
+      VALUE "FileDescription",  "Gregorian Ear Trainer\0"
       VALUE "FileVersion",  "1.0.0\0"
-      VALUE "ProductName",  "GregTrainer\0"
+      VALUE "ProductName",  "Gregorian Ear Trainer\0"
       VALUE "ProductVersion",  "1.0.0\0"
     END
   END

@@ -44,6 +44,8 @@ private:
         Array relativeNotes = { 12, 11, 9, 7, 5, 4, 2, 0 };
         return relativeNotes[index];
     }
+    
+   // JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(GridToMelodyConverter)
 };
 
 /****************************************************************************************/
@@ -60,12 +62,13 @@ public:
         tileIdentifier(id)
     {
         valueTree.addListener(this);
-        tree.setProperty(tileIdentifier, getTileStateAsString(), nullptr);
+        valueTree.setProperty(tileIdentifier, getTileStateAsString(), nullptr);
     }
     
     void mouseDown(const MouseEvent&) override
     {
-        isTileOn() ? valueTree.setProperty(tileIdentifier, tileStateToString(TileState::tileInactive), nullptr) : valueTree.setProperty(tileIdentifier, tileStateToString(TileState::tileActive), nullptr);
+        isTileOn() ? valueTree.setProperty(tileIdentifier, tileStateToString(TileState::tileInactive), nullptr)
+                        : valueTree.setProperty(tileIdentifier, tileStateToString(TileState::tileActive), nullptr);
         
         tilePressedCallback(this);
         mouseDownOnTile = true;
@@ -267,7 +270,7 @@ public:
     {
         //if this turned the tile on, then all other tiles should be turned off
         if(tile->isTileOn())
-            for(auto* t: tiles)
+            for(auto* t : tiles)
                 if (t != tile) t->setTileState(TileState::tileInactive);
     }
     
@@ -336,7 +339,6 @@ GridDisplayComponent::GridDisplayComponent(ValueTree& t, int numColumns, int num
     
     for(int column = 0; column < numColumns; ++column)
     {
-        
         auto* c = new GridColumn(column, numRows, tree);
         c->forEachTile([this](auto& tile){ addAndMakeVisible(tile); });
         c->setText(rowsText);
@@ -436,11 +438,9 @@ int GridDisplayComponent::getNumColumns() const noexcept { return numColumns; }
 
 void GridDisplayComponent::turnAllTilesOff() noexcept
 {
-    for(int c = 0; c < numColumns; ++c)
-        for(int r = 0; r < numRows; ++r)
-        {
-            tree.setProperty(tileIndexToIdentifier(c, r), tileStateToString(TileState::tileInactive), nullptr);
-        }
+    for(int column = 0; column < numColumns; ++column)
+        for(int row = 0; row < numRows; ++row)
+            setStateForTile(column, row, TileState::tileInactive);
 }
 
 

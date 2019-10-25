@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<JUCERPROJECT id="VIA7Uh" name="GregTrainer" projectType="guiapp" jucerVersion="5.4.4"
-              cppLanguageStandard="17">
-  <MAINGROUP id="x0YCOc" name="GregTrainer">
+<JUCERPROJECT id="VIA7Uh" name="Gregorian Ear Trainer" projectType="guiapp"
+              jucerVersion="5.4.4" cppLanguageStandard="17">
+  <MAINGROUP id="x0YCOc" name="Gregorian Ear Trainer">
     <GROUP id="{DC53F2B4-7995-6CD5-BCDE-9DE2CF7E9ACF}" name="Source">
       <FILE id="p6E7zd" name="GridDisplayComponent.cpp" compile="1" resource="0"
             file="Source/GridDisplayComponent.cpp"/>

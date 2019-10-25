@@ -82,9 +82,9 @@ public:
         //need to put a note on message in the buffer
         if(remainderNoteOn < numSamples)
         {
-            if (auto note = getNextMidiNoteOn())
+            if (auto note = getNextMidiNoteOn(); note != 0)
             {
-                buffer.addEvent(MidiMessage::noteOn(1, note, .9f), remainderNoteOn);
+                buffer.addEvent(MidiMessage::noteOn(1, note, 0.9f), remainderNoteOn);
                 remainderNoteOn = numSamplesBetweenNotes - (numSamples - remainderNoteOn);
             }
         }
@@ -93,9 +93,9 @@ public:
         //need to put a note off message in the buffer
         if (remainderNoteOff < numSamples)
         {
-            if (auto note = getNextMidiNoteOff())
+            if (auto note = getNextMidiNoteOff(); note != 0)
             {
-                buffer.addEvent(MidiMessage::noteOff(1, note, 0.f), remainderNoteOff);
+                buffer.addEvent(MidiMessage::noteOff(1, note, 0.0f), remainderNoteOff);
                 remainderNoteOff = numSamplesBetweenNotes - (numSamples - remainderNoteOff);
             }
         }

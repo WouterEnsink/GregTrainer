@@ -228,7 +228,6 @@ void MainComponent::changeListenerCallback(ChangeBroadcaster* broadcaster)
         {
             auto colour = colourPicker->selector->getCurrentColour().toString();
             tree.setProperty(IDs::TileColour, colour, nullptr);
-            
         }
     }
 }
