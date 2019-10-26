@@ -12,17 +12,18 @@
 #include "Synth.h"
 #include "Identifiers.h"
 
-TrainerEngine::TrainerEngine(ValueTree& tree)
+TrainerEngine::TrainerEngine (ValueTree& tree) : engineState {IDs::Engine::EngineRoot}
 {
-    engineState = ValueTree { IDs::Engine::EngineRoot };
-    engineState.addListener(this);
-    tree.appendChild(engineState, nullptr);
     
-    setTimeBetweenNotesInMs(500);
-    setNoteLengthInMs(400);
-    setNumNotesInMelody(8);
+    engineState.addListener (this);
+    tree.appendChild (engineState, nullptr);
+    isPlaying.referTo (engineState, IDs::Engine::PlayState, nullptr);
     
-    playbackInstrument.reset(new SineWaveSynthesizer());
+    setTimeBetweenNotesInMs (500);
+    setNoteLengthInMs (400);
+    setNumNotesInMelody (8);
+    
+    playbackInstrument.reset (new SineWaveSynthesizer());
 }
 
 TrainerEngine::~TrainerEngine()
@@ -33,33 +34,33 @@ TrainerEngine::~TrainerEngine()
 //==================================================================================
 
 
-void TrainerEngine::prepareToPlay(int numSamplesPerBlockExpected, double sampleRate)
+void TrainerEngine::prepareToPlay (int numSamplesPerBlockExpected, double sampleRate)
 {
-    if(playbackInstrument != nullptr)
-        playbackInstrument->prepareToPlay(sampleRate, numSamplesPerBlockExpected);
+    if (playbackInstrument != nullptr)
+        playbackInstrument->prepareToPlay (sampleRate, numSamplesPerBlockExpected);
     
-    midiGenerator.setSampleRate(sampleRate);
+    midiGenerator.setSampleRate (sampleRate);
     currentSampleRate = sampleRate;
 }
 
 
-void TrainerEngine::getNextAudioBlock(const AudioSourceChannelInfo& channelInfo)
+void TrainerEngine::getNextAudioBlock (const AudioSourceChannelInfo& channelInfo)
 {
     auto midi = MidiBuffer();
     auto numSamples = channelInfo.buffer->getNumSamples();
 
-    midiGenerator.renderNextMidiBlock(midi, numSamples);
+    midiGenerator.renderNextMidiBlock (midi, numSamples);
     
   
-    if(playbackInstrument != nullptr)
-        playbackInstrument->processBlock(*channelInfo.buffer, midi);
+    if (playbackInstrument != nullptr)
+        playbackInstrument->processBlock (*channelInfo.buffer, midi);
     
 }
 
 
 void TrainerEngine::releaseResources()
 {
-    if(playbackInstrument != nullptr)
+    if (playbackInstrument != nullptr)
         playbackInstrument->releaseResources();
 }
 
@@ -67,26 +68,26 @@ void TrainerEngine::releaseResources()
 //==================================================================================
 
 
-void TrainerEngine::setNumNotesInMelody(int numNotes)
+void TrainerEngine::setNumNotesInMelody (int numNotes)
 {
-    melodyGenerator.setNumNotesInMelody(numNotes);
+    melodyGenerator.setNumNotesInMelody (numNotes);
 }
 
-void TrainerEngine::setTimeBetweenNotesInMs(int intervalTimeMs)
+void TrainerEngine::setTimeBetweenNotesInMs (int intervalTimeMs)
 {
-    midiGenerator.setTimeBetweenNotesInMs(intervalTimeMs);
+    midiGenerator.setTimeBetweenNotesInMs (intervalTimeMs);
 }
 
-void TrainerEngine::setNoteLengthInMs(int timeInMs)
+void TrainerEngine::setNoteLengthInMs (int timeInMs)
 {
-    midiGenerator.setNoteLengthInMs(timeInMs);
+    midiGenerator.setNoteLengthInMs (timeInMs);
 }
 
 void TrainerEngine::generateNextMelody()
 {
     currentMelody = melodyGenerator.generateMelody();
     
-    midiGenerator.setNotes(currentMelody.midiNotes);
+    midiGenerator.setNotes (currentMelody.midiNotes);
 }
 
 void TrainerEngine::startPlayingMelody()
@@ -99,7 +100,7 @@ void TrainerEngine::stopPlayingMelody()
     midiGenerator.stopPlaying();
 }
 
-void TrainerEngine::checkIfMelodyIsSameAsPlayed(Melody&)
+void TrainerEngine::checkIfMelodyIsSameAsPlayed (Melody&)
 {
     
 }
@@ -107,9 +108,10 @@ void TrainerEngine::checkIfMelodyIsSameAsPlayed(Melody&)
 
 //==================================================================================
 
-void TrainerEngine::valueTreePropertyChanged(ValueTree& t, const Identifier& id)
+void TrainerEngine::valueTreePropertyChanged (ValueTree& t, const Identifier& id)
 {
-    print("Engine: Tree:", t.getType().toString(), "ID:", id.toString(), "value:", t[id].toString());
+    print ("Engine: Tree:", t.getType().toString(), "ID:", id.toString(), "value:", t[id].toString());
+    triggerAsyncUpdate();
 }
 
 //==================================================================================
@@ -117,4 +119,9 @@ void TrainerEngine::valueTreePropertyChanged(ValueTree& t, const Identifier& id)
 bool TrainerEngine::openInstrumentEditor()
 {
     return playbackInstrument->hasEditor();
+}
+
+void TrainerEngine::handleAsyncUpdate()
+{
+    print ("cached value:", isPlaying.get());
 }

@@ -26,24 +26,24 @@ public:
     
     virtual ~GridToMelodyConverter() { }
     
-    virtual Melody convertGridToMelody(const Array<int>& gridState)
+    virtual Melody convertGridToMelody (const Array<int>& gridState)
     {
         Melody melody;
         auto size = gridState.size();
-        melody.relativeNotes.resize(size);
+        melody.relativeNotes.resize (size);
         melody.numNotes = size;
         
-        for(int i = 0; i < melody.relativeNotes.size(); ++i)
-            melody.relativeNotes.set(i, convertIndexToRelativeNote(gridState[i]));
+        for (int i = 0; i < melody.relativeNotes.size(); ++i)
+            melody.relativeNotes.set (i, convertIndexToRelativeNote (gridState[i]));
         
         return melody;
     }
     
 private:
-    virtual int convertIndexToRelativeNote(int index)
+    virtual int convertIndexToRelativeNote (int index)
     {
         print("index: ", index);
-        if(index < 0) return -1;
+        if (index < 0) return -1;
         
         //index 7 = c -> 0, index 6 = d -> 2, etc...
         Array relativeNotes = { 12, 11, 9, 7, 5, 4, 2, 0 };
@@ -51,6 +51,36 @@ private:
     }
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(GridToMelodyConverter)
+};
+
+//===============================================================================================
+// VariantConverter for the TileState, to use to stay in sync with ValueTree
+
+template <>
+class VariantConverter <GridDisplayComponent::TileState> final
+{
+public:
+    using TileState = GridDisplayComponent::TileState;
+    
+    static var toVar (const TileState& tileState)
+    {
+        if (tileState == TileState::tileActive)         return "a";
+        if (tileState == TileState::tileInactive)       return "i";
+        if (tileState == TileState::tileRightAnswer)    return "r";
+        if (tileState == TileState::tileWrongAnswer)    return "w";
+        
+        return "i";
+    }
+    
+    static TileState fromVar (const var& state)
+    {
+        if (state == "a") return TileState::tileActive;
+        if (state == "i") return TileState::tileInactive;
+        if (state == "r") return TileState::tileRightAnswer;
+        if (state == "w") return TileState::tileWrongAnswer;
+        
+        return TileState::tileInactive;
+    }
 };
 
 
@@ -63,95 +93,90 @@ class GridDisplayComponent::GridTileComponent final     : public Component, publ
 {
 public:
     
-    GridTileComponent(ValueTree& tree, const Identifier& id) : valueTree(tree), tileIdentifier(id)
+    GridTileComponent (ValueTree& tree, const Identifier& id) : valueTree (tree), tileIdentifier (id)
     {
-        valueTree.addListener(this);
-        valueTree.setProperty(IDs::Grid::TileState, tileStateToString(TileState::tileInactive), nullptr);
-        valueTree.setProperty(IDs::Grid::TileSetable, true, nullptr);
+        valueTree.addListener (this);
+        valueTree.setProperty (IDs::Grid::TileSetable, true, nullptr);
+        tileState.referTo (valueTree, IDs::Grid::TileState, nullptr);
+        tileState = TileState::tileInactive;
     }
     
     
-    void mouseDown(const MouseEvent&) override
+    void mouseDown (const MouseEvent&) override
     {
         if (isSetable)
-            isTileOn() ? valueTree.setProperty(IDs::Grid::TileState, tileStateToString(TileState::tileInactive), nullptr)
-                        : valueTree.setProperty(IDs::Grid::TileState, tileStateToString(TileState::tileActive), nullptr);
+           tileState = isTileOn() ? TileState::tileInactive : TileState::tileActive;
         
         mouseDownOnTile = true;
         repaint();
     }
     
-    void mouseEnter(const MouseEvent&) override
+    void mouseEnter (const MouseEvent&) override
     {
         mouseHooveringOverTile = true;
         repaint();
     }
     
-    void mouseExit(const MouseEvent&) override
+    void mouseExit (const MouseEvent&) override
     {
         mouseHooveringOverTile = false;
         repaint();
     }
     
-    void mouseUp(const MouseEvent&) override
+    void mouseUp (const MouseEvent&) override
     {
         mouseDownOnTile = false;
         repaint();
     }
     
-    void paint(Graphics& g) override
+    void paint (Graphics& g) override
     {
-        g.setColour(getCurrentFillColour());
+        g.setColour (getCurrentFillColour());
         
         auto floatBounds = getLocalBounds().toFloat();
         
-        g.fillRoundedRectangle(floatBounds, roundness);
+        g.fillRoundedRectangle (floatBounds, roundness);
         
-        g.setColour(getCurrentTextColour());
+        g.setColour (getCurrentTextColour());
         
-        g.setFont(noteFont);
+        g.setFont (noteFont);
         
-        auto bounds = getLocalBounds().reduced(10);
+        auto textBounds = getLocalBounds().reduced(10);
         
-        g.drawText(tileText, bounds, Justification::centred);
+        g.drawText (tileText, textBounds, Justification::centred);
     }
     
     
-    void valueTreePropertyChanged(ValueTree& tree, const Identifier& id) override
+    void valueTreePropertyChanged (ValueTree& tree, const Identifier& id) override
     {
-        if(tree.hasType(tileIdentifier))
+        if (tree.hasType (tileIdentifier))
         {
-            if(id == IDs::Grid::TileState)
-                setTileStateFromString(tree.getProperty(id));
+            if (id == IDs::Grid::TileState) repaint();
             
-            if(id == IDs::Grid::TileSetable)
-                isSetable = tree.getProperty(IDs::Grid::TileSetable);
+            if (id == IDs::Grid::TileSetable)
+                isSetable = tree.getProperty (IDs::Grid::TileSetable);
             
-            if(id == IDs::Grid::TileText)
-                tileText = tree.getProperty(id);
+            if (id == IDs::Grid::TileText)
+                tileText = tree.getProperty (id);
         }
     }
     
     void resized() override { }
 
-    bool isTileOn() const noexcept                  { return tileState == TileState::tileActive; }
+    bool isTileOn() const noexcept                  { return tileState == TileState::tileActive;    }
     
-    void setTileState(TileState state) noexcept
-    {
-        tileState = state;
-        repaint();
-    }
+    void setTileState (TileState state) noexcept    { tileState = state;                            }
     
-    TileState getTileState() const noexcept         { return tileState; }
+    TileState getTileState() const noexcept         { return tileState;                             }
     
-    void setText(const String& text) noexcept       { tileText = text; repaint(); }
+    void setText (const String& text) noexcept      { tileText = text; repaint();                   }
     
-    void setRoundness(float roundness) noexcept     { roundness = roundness; repaint(); }
+    void setRoundness (float roundness) noexcept    { roundness = roundness; repaint();             }
     
-    void setSetability(bool setable) noexcept       { isSetable = setable; }
+    void setSetability (bool setable) noexcept      { isSetable = setable;                          }
     
     
-    void setColourForTileState(TileState state, Colour colour)
+    void setColourForTileState (TileState state, Colour colour)
     {
         switch (state)
         {
@@ -171,18 +196,10 @@ public:
                 tileWrongAnswerColour = colour;
                 break;
         }
+        
         repaint();
     }
-    
-    String getTileStateAsString()
-    {
-        return tileStateToString(tileState);
-    }
-    
-    void setTileStateFromString(String string)
-    {
-        setTileState(tileStateFromString(string));
-    }
+ 
     
 private:
     
@@ -194,8 +211,8 @@ private:
     
     Colour getCurrentFillColour() const
     {
-        if(mouseDownOnTile)         return mouseDownColour;
-        if(mouseHooveringOverTile)  return mouseHooverColour;
+        if (mouseDownOnTile)         return mouseDownColour;
+        if (mouseHooveringOverTile)  return mouseHooverColour;
         
         return getColourForCurrentTileState();
     }
@@ -236,7 +253,7 @@ private:
     
     bool isSetable { true };
     
-    TileState tileState { TileState::tileInactive };
+    CachedValue<TileState> tileState;
     
     Colour tileActiveColour         { Colours::gainsboro    };
     Colour tileInactiveColour       { Colours::black        };
@@ -246,7 +263,7 @@ private:
     Colour mouseHooverColour        { Colours::dimgrey      };
     Colour mouseDownColour          { Colours::white        };
     
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(GridTileComponent)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (GridTileComponent)
     
 };
 
@@ -254,50 +271,51 @@ private:
 //===============================================================================================
 
 
-GridDisplayComponent::GridDisplayComponent(ValueTree& t, int numColumns, int numRows, const StringArray& rowsText) :
-    numRows(numRows),
-    numColumns(numColumns)
+GridDisplayComponent::GridDisplayComponent (ValueTree& t, int numColumns, int numRows, const StringArray& rowsText) :
+    numRows (numRows),
+    numColumns (numColumns)
 {
     
     tree = ValueTree { IDs::Grid::GridRoot };
-    t.appendChild(tree, nullptr);
+    t.appendChild (tree, nullptr);
     
     
-    jassert(numRows == rowsText.size());
+    jassert (numRows == rowsText.size());
     
-    tileIdentifiers.resize(numColumns);
+    tileIdentifiers.resize (numColumns);
     
     for (auto& c : tileIdentifiers)
-        c.resize(numRows);
+        c.resize (numRows);
     
-    gridToMelodyConverter.reset(new GridToMelodyConverter);
+    gridToMelodyConverter.reset (new GridToMelodyConverter);
    
 
-    for(int column = 0; column < numColumns; ++column)
+    for (int column = 0; column < numColumns; ++column)
     {
-        OwnedArray<GridTileComponent>* col = new OwnedArray<GridTileComponent>;
+        OwnedArray<GridTileComponent>* col = new OwnedArray<GridTileComponent>();
         
-        for(int row = 0; row < numRows; ++row)
+        for (int row = 0; row < numRows; ++row)
         {
-            auto type = tileIndexToIdentifier(column, row);
+            auto type = tileIndexToIdentifier (column, row);
             ValueTree childTile { type };
             
-            auto* tileptr = new GridTileComponent(childTile, type);
+            auto* tileptr = new GridTileComponent (childTile, type);
             
-            col->set(row, tileptr);
+            col->set (row, tileptr);
             
-            addAndMakeVisible(tileptr);
+            addAndMakeVisible (tileptr);
             
-            childTile.setProperty(IDs::Grid::TileText, rowsText[row], nullptr);
+            childTile.setProperty (IDs::Grid::TileText, rowsText[row], nullptr);
             
-            tree.appendChild(childTile, nullptr);
+            tree.appendChild (childTile, nullptr);
         }
-        tiles.set(column, col);
+        
+        tiles.set (column, col);
     }
     
     
-    setSpaceBetweenTiles(2);
-    tree.addListener(this);
+    setSpaceBetweenTiles (2);
+    tree.addListener (this);
 }
 
 
@@ -307,16 +325,16 @@ GridDisplayComponent::~GridDisplayComponent()
 }
 
 
-void GridDisplayComponent::paint(Graphics& g)
+void GridDisplayComponent::paint (Graphics& g)
 {
-    g.setColour(Colours::black);
-    g.fillRoundedRectangle(getLocalBounds().toFloat(), 5.f);
+    g.setColour (Colours::black);
+    g.fillRoundedRectangle (getLocalBounds().toFloat(), 5.f);
 }
 
-Rectangle<int> GridDisplayComponent::getBoundsForTile(int column, int row)
+
+Rectangle<int> GridDisplayComponent::getBoundsForTile (int column, int row)
 {
-    auto bounds = getLocalBounds();
-    auto [x, y, w, h] = getRectangleDimentions(bounds);
+    auto [x, y, w, h] = getRectangleDimentions (getLocalBounds());
     
     w /= numColumns;
     h /= numRows;
@@ -332,48 +350,45 @@ Rectangle<int> GridDisplayComponent::getBoundsForTile(int column, int row)
 
 void GridDisplayComponent::resized()
 {
-    for(int c = 0; c < numColumns; c++)
-        for(int r = 0; r < numRows; r++)
-        {
-            auto bounds = getBoundsForTile(c, r);
-            auto* column = tiles[c];
-            (*column)[r]->setBounds(bounds);
-        }
+    for (int column = 0; column < numColumns; column++)
+        for (int row = 0; row < numRows; row++)
+            (*tiles[column])[row]->setBounds (getBoundsForTile (column, row));
 }
 
 
-void GridDisplayComponent::setSpaceBetweenTiles(int space) noexcept
+void GridDisplayComponent::setSpaceBetweenTiles (int space) noexcept
 {
     spaceBetweenTiles = space;
-    halfSpaceBetweenTiles = space/2;
+    halfSpaceBetweenTiles = space / 2;
     repaint();
 }
 
 
-void GridDisplayComponent::setStateForTile(int column, int row, TileState state) noexcept
+void GridDisplayComponent::setStateForTile (int column, int row, TileState state) noexcept
 {
-    jassert(row < numRows && column < numColumns);
+    jassert (row < numRows && column < numColumns);
     
-    auto tile = tree.getChildWithName(tileIndexToIdentifier(column, row));
-    tile.setProperty(IDs::Grid::TileState, tileStateToString(state), nullptr);
+    auto tile = tree.getChildWithName (tileIndexToIdentifier (column, row));
+    
+    tile.setProperty (IDs::Grid::TileState, VariantConverter<TileState>::toVar (state), nullptr);
 }
 
 
-void GridDisplayComponent::setSetabilityTile(int column, int row, bool settable) noexcept
+void GridDisplayComponent::setSetabilityTile (int column, int row, bool settable) noexcept
 {
-    jassert(row < numRows && column < numColumns);
+    jassert (row < numRows && column < numColumns);
     
-    auto type = tileIndexToIdentifier(column, row);
-    auto tile = tree.getChildWithName(type);
-    tile.setProperty(IDs::Grid::TileSetable, settable, nullptr);
+    auto type = tileIndexToIdentifier (column, row);
+    auto tile = tree.getChildWithName (type);
+    tile.setProperty (IDs::Grid::TileSetable, settable, nullptr);
 }
 
-void GridDisplayComponent::setSetabilityColumn(int column, bool settable) noexcept
+void GridDisplayComponent::setSetabilityColumn (int column, bool settable) noexcept
 {
     jassert(column < numColumns);
     
-    for(int r = 0; r < numRows; ++r)
-        setSetabilityTile(column, r, settable);
+    for (int r = 0; r < numRows; ++r)
+        setSetabilityTile (column, r, settable);
 }
 
 int GridDisplayComponent::getNumRows() const noexcept       { return numRows; }
@@ -383,81 +398,51 @@ int GridDisplayComponent::getNumColumns() const noexcept    { return numColumns;
 
 void GridDisplayComponent::turnAllTilesOff() noexcept
 {
-    for(int column = 0; column < numColumns; ++column)
-        for(int row = 0; row < numRows; ++row)
-            setStateForTile(column, row, TileState::tileInactive);
+    for (int column = 0; column < numColumns; ++column)
+        for (int row = 0; row < numRows; ++row)
+            setStateForTile (column, row, TileState::tileInactive);
 }
 
 
-void GridDisplayComponent::valueTreePropertyChanged(ValueTree& tree, const Identifier& id)
+void GridDisplayComponent::valueTreePropertyChanged (ValueTree& tree, const Identifier& id)
 {
-    if (tree.hasProperty(IDs::Grid::TileState))
-        if (tileStateFromString(tree[IDs::Grid::TileState].toString()) == TileState::tileActive)
+    if (tree.hasProperty (IDs::Grid::TileState))
+        if (VariantConverter<TileState>::fromVar (tree[id]) == TileState::tileActive)
         {
-            auto [column, row] = tileIndexFromIdentifier(tree.getType());
-            turnOffAllRowsInColumnExceptThisOne(column, row);
+            auto [column, row] = tileIndexFromIdentifier (tree.getType());
+            setAllRowsInColumnInactiveExceptThisOne (column, row);
         }
 }
 
 
-void GridDisplayComponent::turnOffAllRowsInColumnExceptThisOne(int column, int indexToLeaveActive)
+void GridDisplayComponent::setAllRowsInColumnInactiveExceptThisOne (int column, int rowToLeaveActive)
 {
-    for(int row = 0; row < numRows; ++row)
-        if(row != indexToLeaveActive)
-        {
-            auto tile = tree.getChildWithName(tileIndexToIdentifier(column, row));
-            tile.setProperty(IDs::Grid::TileState, tileStateToString(TileState::tileInactive), nullptr);
-        }
+    for (int row = 0; row < numRows; ++row)
+        if (row != rowToLeaveActive)
+            setStateForTile (column, row, TileState::tileInactive);
 }
 
 
-String GridDisplayComponent::tileStateToString(TileState state)
-{
-    switch (state)
-    {
-        case TileState::tileActive:
-            return "active";
-            break;
-        
-        case TileState::tileInactive:
-            return "inactive";
-            break;
-            
-        case TileState::tileRightAnswer:
-            return "right";
-            break;
-            
-        case TileState::tileWrongAnswer:
-            return "wrong";
-            break;
-    }
-}
-
-GridDisplayComponent::TileState GridDisplayComponent::tileStateFromString(String string)
-{
-    if(string == "active")      return TileState::tileActive;
-    if(string == "inactive")    return TileState::tileInactive;
-    if(string == "right")       return TileState::tileRightAnswer;
-    
-    return TileState::tileWrongAnswer;
-}
-
-
-Identifier GridDisplayComponent::tileIndexToIdentifier(int column, int row)
+Identifier GridDisplayComponent::tileIndexToIdentifier (int column, int row)
 {
     StringArray a { String { column }, String { row } };
     
-    return a.joinIntoString("_");
+    return a.joinIntoString ("_");
 }
 
-std::tuple<int, int> GridDisplayComponent::tileIndexFromIdentifier(Identifier id)
+std::tuple<int, int> GridDisplayComponent::tileIndexFromIdentifier (Identifier id)
 {
     auto identifier = id.toString();
-    auto array = StringArray::fromTokens(id, "_", "");
+    auto array = StringArray::fromTokens (id, "_", "");
     auto column = array[0].getIntValue();
     auto row = array[1].getIntValue();
+    
     return { column, row };
 }
 
+void GridDisplayComponent::initializeTileIdentifiers (int numColumns, int numRows)
+{
+    
+}
 
 //===============================================================================================

@@ -34,7 +34,7 @@ class GridDisplayComponent final  : public Component, public TreeListener
 {
 public:
     
-    GridDisplayComponent(ValueTree&, int numColumns, int numRows, const StringArray& rowsText);
+    GridDisplayComponent (ValueTree&, int numColumns, int numRows, const StringArray& rowsText);
     
     ~GridDisplayComponent();
     
@@ -48,19 +48,19 @@ public:
     
     //======================================================================
     
-    void paint(Graphics& g) override;
+    void paint (Graphics& g) override;
     
     void resized() override;
     
     //======================================================================
     
-    void setSpaceBetweenTiles(int space) noexcept;
+    void setSpaceBetweenTiles (int space) noexcept;
     
-    void setStateForTile(int column, int row, TileState on) noexcept;
+    void setStateForTile (int column, int row, TileState on) noexcept;
     
-    void setSetabilityTile(int column, int row, bool settable) noexcept;
+    void setSetabilityTile (int column, int row, bool settable) noexcept;
     
-    void setSetabilityColumn(int column, bool settable) noexcept;
+    void setSetabilityColumn (int column, bool settable) noexcept;
     
     void turnAllTilesOff() noexcept;
     
@@ -72,13 +72,13 @@ public:
     
     //======================================================================
     
-    static Identifier tileIndexToIdentifier(int column, int row);
+    static Identifier tileIndexToIdentifier (int column, int row);
     
-    static std::tuple<int, int> tileIndexFromIdentifier(Identifier);
+    static std::tuple<int, int> tileIndexFromIdentifier (Identifier);
     
-    static String tileStateToString(TileState state);
+    //======================================================================
     
-    static TileState tileStateFromString(String);
+    void valueTreePropertyChanged (ValueTree&, const Identifier&) override;
     
     //======================================================================
     
@@ -86,13 +86,13 @@ private:
     
     class GridTileComponent;
     
-    void turnOffAllRowsInColumnExceptThisOne(int column, int row);
+    void setAllRowsInColumnInactiveExceptThisOne (int column, int row);
     
-    Rectangle<int> getBoundsForTile(int column, int row);
+    Rectangle<int> getBoundsForTile (int column, int row);
     
     //======================================================================
     
-    void valueTreePropertyChanged(ValueTree&, const Identifier&) override;
+    
     
     int spaceBetweenTiles, halfSpaceBetweenTiles;
     int numRows, numColumns;
@@ -104,6 +104,8 @@ private:
     OwnedArray<OwnedArray<GridTileComponent>> tiles;
     
     Array<Array<Identifier>> tileIdentifiers;
+    
+    static void initializeTileIdentifiers (int, int);
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(GridDisplayComponent)
     

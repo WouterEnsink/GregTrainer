@@ -9,19 +9,22 @@
 // to the user
 
 
-void compareRelativeMelodies(const Melody& actualMelody, const Melody& gridMelody)
+void compareRelativeMelodies (const Melody& actualMelody, const Melody& gridMelody)
 {
     if (actualMelody.relativeNotes.size() != gridMelody.relativeNotes.size())
-        print("melodies not the same length");
+        print ("melodies not the same length");
     
     for (int i = 0; i < actualMelody.numNotes; ++i)
     {
         if (actualMelody.relativeNotes[i] != gridMelody.relativeNotes[i])
         {
-            print("note", i, "not the same:", "actual note:", actualMelody.relativeNotes[i],
-                  "grid note:", gridMelody.relativeNotes[i]);
+            print ("note", i, "not the same:", "actual note:", actualMelody.relativeNotes[i],
+                   "grid note:", gridMelody.relativeNotes[i]);
         }
-        else print("note ", i, "is the same");
+        else
+        {
+            print ("note ", i, "is the same");
+        }
     }
 }
 
@@ -29,7 +32,7 @@ void compareRelativeMelodies(const Melody& actualMelody, const Melody& gridMelod
 //===============================================================================================
 
 
-MainComponent::MainComponent(ValueTree& t) :
+MainComponent::MainComponent (ValueTree& t) :
     tree(t), gridDisplay(tree, 8, 8, { "C", "B", "A", "G", "F", "E", "D", "C" }), trainerEngine(tree)
 {
     setSize (800, 600);
@@ -57,18 +60,18 @@ MainComponent::MainComponent(ValueTree& t) :
     {
         gridDisplay.turnAllTilesOff();
         Random rand;
-        gridDisplay.setStateForTile(gridDisplay.getNumColumns()-1,
-                                   rand.nextInt(gridDisplay.getNumRows() - 1),
-                                   GridDisplayComponent::TileState::tileActive);
+        gridDisplay.setStateForTile (gridDisplay.getNumColumns()-1,
+                                     rand.nextInt (gridDisplay.getNumRows() - 1),
+                                     GridDisplayComponent::TileState::tileActive);
         
-        gridDisplay.setSetabilityColumn(gridDisplay.getNumColumns()-1, false);
+        gridDisplay.setSetabilityColumn (gridDisplay.getNumColumns() - 1, false);
         
         trainerEngine.generateNextMelody();
-        playButton.setButtonText("Start Playing");
+        playButton.setButtonText ("Start Playing");
         
-        if (auto engine = tree.getChildWithName(IDs::Engine::EngineRoot); engine.isValid())
+        if (auto engine = tree.getChildWithName (IDs::Engine::EngineRoot); engine.isValid())
         {
-            engine.setProperty(IDs::Engine::PlayState, "new playstate", nullptr);
+            engine.setProperty (IDs::Engine::PlayState, true, nullptr);
         }
         
         
@@ -77,23 +80,23 @@ MainComponent::MainComponent(ValueTree& t) :
     
     submitButton.onClick = [this]
     {
-        answerLabel.setText("You Suck", NotificationType::dontSendNotification);
+        answerLabel.setText ("You Suck", NotificationType::dontSendNotification);
        // compareRelativeMelodies(melody, gridDisplay.getGridStateAsMelody());
     };
     
     infoButton.onClick = [this]{
         auto* infoPanel = new InfoPanelComponent();
-        infoPanel->setSize(400, 200);
-        CallOutBox::launchAsynchronously(infoPanel, infoButton.getScreenBounds(), nullptr);
+        infoPanel->setSize (400, 200);
+        CallOutBox::launchAsynchronously (infoPanel, infoButton.getScreenBounds(), nullptr);
     };
     
     colourPickButton.onClick = [this]{
-        if(!colourPicker) colourPicker.reset(new ColourPickerWindow(tree, [this]{ colourPicker = nullptr; }));
+        if (! colourPicker) colourPicker.reset (new ColourPickerWindow(tree, [this] { colourPicker = nullptr; }));
     };
     
     
-    answerLabel.setText("Answer will be shown here!", NotificationType::dontSendNotification);
-    answerLabel.setJustificationType(Justification::centred);
+    answerLabel.setText ("Answer will be shown here!", NotificationType::dontSendNotification);
+    answerLabel.setJustificationType (Justification::centred);
 }
 
 MainComponent::~MainComponent()
@@ -106,12 +109,12 @@ MainComponent::~MainComponent()
 
 void MainComponent::prepareToPlay (int samplesPerBlockExpected, double sampleRate)
 {
-    trainerEngine.prepareToPlay(samplesPerBlockExpected, sampleRate);
+    trainerEngine.prepareToPlay (samplesPerBlockExpected, sampleRate);
 }
 
 void MainComponent::getNextAudioBlock (const AudioSourceChannelInfo& bufferToFill)
 {
-    trainerEngine.getNextAudioBlock(bufferToFill);
+    trainerEngine.getNextAudioBlock (bufferToFill);
 }
 
 void MainComponent::releaseResources()
@@ -143,20 +146,20 @@ void MainComponent::paint (Graphics& g)
 
 void MainComponent::resized()
 {
-    setSize(800, 600); // makes window nonresizable
+    setSize (800, 600); // makes window nonresizable
     
     auto r = Rectangle { 50, 25, 200, 50 };
     
     // set bounds for buttons with even spacing
     visitComponents({ &playButton, &generateButton, &submitButton },
-                    [&r](auto& c) { c.setBounds(r); r.translate(250, 0); });
+                    [&r] (auto& c) { c.setBounds(r); r.translate(250, 0); });
     
-    gridDisplay.setBounds({ 52, 100, 696, 320 });
+    gridDisplay.setBounds ({ 52, 100, 696, 320 });
     
-    answerLabel.setBounds(100, 500, 600, 100);
-    infoButton.setBounds(10, 10, 25, 25);
+    answerLabel.setBounds (100, 500, 600, 100);
+    infoButton.setBounds (10, 10, 25, 25);
     
-    colourPickButton.setBounds(50, 450, 200, 50);
+    colourPickButton.setBounds (50, 450, 200, 50);
     
 }
 

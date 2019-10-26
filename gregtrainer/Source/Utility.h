@@ -16,8 +16,8 @@
 // Some Utitlity functions and classes to make things a little cleaner and more confinient
 
 
-template<typename... T>
-auto print(T&&... args) noexcept
+template <typename... T>
+auto print (T&&... args) noexcept
 {
     ([](auto&& arg){ std::cout << arg << " "; } (args), ...);
     std::cout << '\n';
@@ -26,10 +26,10 @@ auto print(T&&... args) noexcept
 //========================================================================================
 // Enables you to do an action to multiple components at once
 
-template<typename Function>
-auto visitComponents(const Array<Component*>& components, const Function& f) noexcept
+template <typename Function>
+auto visitComponents (const Array<Component*>& components, const Function& f) noexcept
 {
-    for(auto* c : components) f(*c);
+    for (auto* c : components) f(*c);
 }
 
 //========================================================================================
@@ -37,8 +37,8 @@ auto visitComponents(const Array<Component*>& components, const Function& f) noe
 // way of getting x, y, w, h from some bounds for example
 
 
-template<typename T>
-auto getRectangleDimentions(const Rectangle<T>& r) noexcept
+template <typename T>
+auto getRectangleDimentions (const Rectangle<T>& r) noexcept
 {
     return std::tuple<T, T, T, T> { r.getX(), r.getY(), r.getWidth(), r.getHeight() };
 }
@@ -49,7 +49,7 @@ auto getRectangleDimentions(const Rectangle<T>& r) noexcept
 // when assigned a new value
 
 
-template<typename T>
+template <typename T>
 class Property
 {
 public:
@@ -68,10 +68,10 @@ public:
 class TreeListener : public ValueTree::Listener
 {
 public:
-    void valueTreePropertyChanged(ValueTree&, const Identifier&) override { }
-    void valueTreeChildAdded(ValueTree&, ValueTree&) override { }
-    void valueTreeChildRemoved(ValueTree&, ValueTree&, int) override { }
-    void valueTreeChildOrderChanged(ValueTree&, int, int) override { }
-    void valueTreeParentChanged(ValueTree&) override { }
-    void valueTreeRedirected(ValueTree&) override { }
+    void valueTreePropertyChanged (ValueTree&, const Identifier&) override { }
+    void valueTreeChildAdded (ValueTree&, ValueTree&) override { }
+    void valueTreeChildRemoved (ValueTree&, ValueTree&, int) override { }
+    void valueTreeChildOrderChanged (ValueTree&, int, int) override { }
+    void valueTreeParentChanged (ValueTree&) override { }
+    void valueTreeRedirected (ValueTree&) override { }
 };

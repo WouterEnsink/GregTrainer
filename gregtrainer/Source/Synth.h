@@ -13,10 +13,10 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "Utility.h"
 
-/*
-    For now this is a simple sine synth from a Juce example as I haven't had the time to make
-    a synth myself yet.
- */
+//==============================================================================
+// For now this is a simple sine synth from a Juce example
+// as I haven't had the time to make a synth myself yet.
+
 
 struct SineWaveSound   : public SynthesiserSound
 {
@@ -125,23 +125,23 @@ class InternalProcessorBase  : public AudioProcessor
 public:
     AudioProcessorEditor* createEditor() override { return nullptr; }
     bool hasEditor() const override { return false; }
-    int getNumPrograms () override { return 0; }
-    int getCurrentProgram () override { return 0; }
-    void setCurrentProgram (int index) override { }
+    int getNumPrograms() override { return 0; }
+    int getCurrentProgram() override { return 0; }
+    void setCurrentProgram (int index) override {}
     const String getProgramName (int index) override { return "InternalProcessor"; }
-    void changeProgramName (int index, const String &newName) override { }
-    void getStateInformation (MemoryBlock &destData) override { }
-    void setStateInformation (const void *data, int sizeInBytes) override { }
+    void changeProgramName (int index, const String &newName) override {}
+    void getStateInformation (MemoryBlock &destData) override {}
+    void setStateInformation (const void *data, int sizeInBytes) override {}
     
-    double getTailLengthSeconds () const override { return 0.0; }
-    bool acceptsMidi () const override { return true; }
-    bool producesMidi () const override { return false; }
+    double getTailLengthSeconds() const override { return 0.0; }
+    bool acceptsMidi() const override { return true; }
+    bool producesMidi() const override { return false; }
     
-    const String getName () const override { return "InternalProcessor"; }
+    const String getName() const override { return "InternalProcessor"; }
     
-    void prepareToPlay (double sampleRate, int maximumExpectedSamplesPerBlock) override { }
-    void releaseResources () override { }
-    void processBlock (AudioBuffer< float > &buffer, MidiBuffer &midiMessages) override { }
+    void prepareToPlay (double sampleRate, int maximumExpectedSamplesPerBlock) override {}
+    void releaseResources() override {}
+    void processBlock (AudioBuffer< float > &buffer, MidiBuffer &midiMessages) override {}
 };
 
 
@@ -154,22 +154,20 @@ public:
     
     SineWaveSynthesizer()
     {
-        synth.addVoice(new SineWaveVoice());
-        synth.addSound(new SineWaveSound());
+        synth.addVoice (new SineWaveVoice());
+        synth.addSound (new SineWaveSound());
     }
     
     void prepareToPlay (double sampleRate, int maximumExpectedSamplesPerBlock) override
     {
-        synth.setCurrentPlaybackSampleRate(sampleRate);
+        synth.setCurrentPlaybackSampleRate (sampleRate);
     }
     
-    void releaseResources () override
-    {
-    }
+    void releaseResources() override {}
     
     void processBlock (AudioBuffer<float>& buffer, MidiBuffer& midiMessages) override
     {
-        synth.renderNextBlock(buffer, midiMessages, 0, buffer.getNumSamples());
+        synth.renderNextBlock (buffer, midiMessages, 0, buffer.getNumSamples());
     }
     
 private:

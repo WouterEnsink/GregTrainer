@@ -13,7 +13,7 @@ class MainComponent   : public AudioAppComponent
 {
 public:
     //==============================================================================
-    MainComponent(ValueTree& v);
+    MainComponent (ValueTree& v);
     ~MainComponent();
 
     //==============================================================================

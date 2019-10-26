@@ -18,29 +18,29 @@
 // This is the main engine for the trainer
 // it provides everything we need that is not the interface
 
-class TrainerEngine final   : public TreeListener, public AudioSource
+class TrainerEngine final   : public TreeListener, public AudioSource, public AsyncUpdater
 {
 public:
     
-    TrainerEngine(ValueTree&);
+    TrainerEngine (ValueTree&);
     
     ~TrainerEngine();
     
     //===================================================================
     
-    void prepareToPlay(int, double) override;
+    void prepareToPlay (int, double) override;
     
-    void getNextAudioBlock(const AudioSourceChannelInfo&) override;
+    void getNextAudioBlock (const AudioSourceChannelInfo&) override;
     
     void releaseResources() override;
     
     //===================================================================
     
-    void setNumNotesInMelody(int);
+    void setNumNotesInMelody (int);
     
-    void setTimeBetweenNotesInMs(int);
+    void setTimeBetweenNotesInMs (int);
     
-    void setNoteLengthInMs(int);
+    void setNoteLengthInMs (int);
     
     void generateNextMelody();
     
@@ -48,11 +48,11 @@ public:
     
     void stopPlayingMelody();
     
-    void checkIfMelodyIsSameAsPlayed(Melody&);
+    void checkIfMelodyIsSameAsPlayed (Melody&);
     
     //===================================================================
     
-    void valueTreePropertyChanged(ValueTree&, const Identifier&) override;
+    void valueTreePropertyChanged (ValueTree&, const Identifier&) override;
     
     //===================================================================
     
@@ -60,9 +60,13 @@ public:
     
     //===================================================================
     
+    void handleAsyncUpdate() override;
+    
 private:
     
     Melody currentMelody;
+    
+    
     
     int currentNumNotesInMelody, noteLength, timeBetweenNotes;
     
@@ -74,7 +78,7 @@ private:
     
     MelodyGenerator melodyGenerator;
     MidiGenerator midiGenerator;
-    
+    CachedValue<bool> isPlaying;
     //===================================================================
     // maybe the engine should use a reference counted melody object
     // since this is compatible with the value tree

@@ -44,7 +44,7 @@ class MelodyGenerator final
 {
 public:
     
-    Melody generateMelody(int numNotes) noexcept
+    Melody generateMelody (int numNotes) noexcept
     {
         auto mode = getRandomMode();
         
@@ -65,7 +65,7 @@ public:
         };
     }
     
-    void setNumNotesInMelody(int num)
+    void setNumNotesInMelody (int num)
     {
         numNotes = num;
     }
@@ -74,7 +74,7 @@ public:
     
     String getRandomMode() noexcept { return modes[random.nextInt(modes.size())]; }
     
-    int getIndexGroundNoteForMode(const String& mode) const noexcept
+    int getIndexGroundNoteForMode (const String& mode) const noexcept
     {
         if(mode == "D") return 1;
         if(mode == "E") return 2;
@@ -84,17 +84,17 @@ public:
     }
     
     
-    Array<int> generateMidiNotesFromRelativeNotes(Array<int> relativeNotes) noexcept
+    Array<int> generateMidiNotesFromRelativeNotes (Array<int> relativeNotes) noexcept
     {
         auto transpose = random.nextInt(12) + 60;
         
-        for(auto& note : relativeNotes) note += transpose;
+        for (auto& note : relativeNotes) note += transpose;
         
         return relativeNotes;
     }
     
     
-    Array<int> generateRelativeNotesForMode(const String& mode, int numNotes) noexcept
+    Array<int> generateRelativeNotesForMode (const String& mode, int numNotes) noexcept
     {
         Array<int> notes;
         
@@ -104,25 +104,25 @@ public:
         
         auto currentNoteIndex = groundIndex;
         
-        notes.add(normalizedMidiNoteDistances[currentNoteIndex]);
+        notes.add (normalizedMidiNoteDistances[currentNoteIndex]);
         
-        for(int i = 1; i < numNotes; ++i)
+        for (int i = 1; i < numNotes; ++i)
         {
-            auto direction = random.nextInt(2) ? 1 : -1;
+            auto direction = random.nextInt (2) ? 1 : -1;
 
             auto interval = direction * distances[random.nextInt(distances.size())];
 
             currentNoteIndex += interval;
 
-            if(currentNoteIndex > normalizedMidiNoteDistances.size()-1)
+            if (currentNoteIndex > normalizedMidiNoteDistances.size()-1)
                 currentNoteIndex = normalizedMidiNoteDistances.size()-1;
             
-            if(currentNoteIndex < 0) currentNoteIndex = 0;
+            if (currentNoteIndex < 0) currentNoteIndex = 0;
 
-            notes.add(normalizedMidiNoteDistances[currentNoteIndex]);
+            notes.add (normalizedMidiNoteDistances[currentNoteIndex]);
         }
         
-        std::reverse(std::begin(notes), std::end(notes));
+        std::reverse (std::begin (notes), std::end (notes));
         
         return notes;
     }

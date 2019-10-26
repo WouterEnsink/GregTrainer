@@ -16,42 +16,42 @@
 //==============================================================================
 // basic info panel with some info about author and where requests can be sent
 
-class InfoPanelComponent : public Component
+class InfoPanelComponent    : public Component
 {
 public:
     InfoPanelComponent()
     {
-        addAndMakeVisible(emailLink);
+        addAndMakeVisible (emailLink);
         Font fond { "Arial", 25.f, Font::plain };
-        emailLink.setFont(fond, false);
-        emailLink.setColour(HyperlinkButton::textColourId, Colours::blue);
+        emailLink.setFont (fond, false);
+        emailLink.setColour (HyperlinkButton::textColourId, Colours::blue);
     }
     
-    void paint(Graphics& g) override
+    void paint (Graphics& g) override
     {
-        g.fillAll(Colours::black);
-        g.setColour(Colours::white);
-        g.setFont(30.f);
+        g.fillAll (Colours::black);
+        g.setColour (Colours::white);
+        g.setFont (30.f);
         
-        g.drawText("Author: Wouter Ensink",
-                   getLocalBounds().toFloat().withTrimmedBottom(getHeight()/2),
-                   Justification::centred);
+        g.drawText ("Author: Wouter Ensink",
+                    getLocalBounds().toFloat().withTrimmedBottom (getHeight() / 2),
+                    Justification::centred);
         
-        g.setFont(25.f);
+        g.setFont (25.f);
         
         auto bounds = getLocalBounds().toFloat();
         
-        auto textBounds = bounds.withTrimmedTop(getHeight()/3).withTrimmedBottom(getHeight()/3);
+        auto textBounds = bounds.withTrimmedTop (getHeight() / 3).withTrimmedBottom (getHeight() / 3);
         
-        g.drawText("Send Bugs or Requests to:",
-                   textBounds.translated(0, getHeight()/6),
-                   Justification::horizontallyCentred);
+        g.drawText ("Send Bugs or Requests to:",
+                    textBounds.translated (0, getHeight() / 6),
+                    Justification::horizontallyCentred);
     }
     
     void resized() override
     {
-        auto bounds = getLocalBounds().withTrimmedTop(getHeight()/3).withTrimmedBottom(getHeight()/3);
-        emailLink.setBounds(bounds.translated(0, getHeight()/3));
+        auto bounds = getLocalBounds().withTrimmedTop (getHeight() / 3).withTrimmedBottom (getHeight() / 3);
+        emailLink.setBounds (bounds.translated(0, getHeight() / 3));
     }
     
     HyperlinkButton emailLink { "wouter.ensink@student.hku.nl", { "wouter.ensink@student.hku.nl" } };
@@ -69,15 +69,15 @@ public:
     
     // needs an onClosing lambda to set the pointer holding this to null..
     
-    ColourPickerWindow(ValueTree& t, std::function<void()> onClosing) :
-        DocumentWindow("Colour Picker", Colours::black, TitleBarButtons::closeButton),
-        tree(t),
-        onClosing(onClosing)
+    ColourPickerWindow (ValueTree& t, std::function<void()> onClosing) :
+        DocumentWindow ("Colour Picker", Colours::black, TitleBarButtons::closeButton),
+        tree (t),
+        onClosing (onClosing)
     {
-        setSize(100, 100);
-        setContentOwned(selector = new ColourSelector(), false);
+        setSize (100, 100);
+        setContentOwned (selector = new ColourSelector(), false);
         
-        selector->addChangeListener(this);
+        selector->addChangeListener (this);
         
         setResizable (true, false);
         setResizeLimits (300, 400, 800, 1500);
@@ -93,10 +93,10 @@ public:
     
 private:
     
-    void changeListenerCallback(ChangeBroadcaster* broadcaster) override
+    void changeListenerCallback (ChangeBroadcaster* broadcaster) override
     {
-        if(broadcaster == selector)
-            tree.setProperty(IDs::Grid::TileColour, selector->getCurrentColour().toString(), nullptr);
+        if (broadcaster == selector)
+            tree.setProperty (IDs::Grid::TileColour, selector->getCurrentColour().toString(), nullptr);
     }
     
     ColourSelector* selector;
