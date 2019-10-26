@@ -12,13 +12,18 @@
 #include "Identifiers.h"
 #include "MelodyGenerator.h"
 
-/* Converts the grid's state to a Melody that contains relative notes
- * Midi notes are not inserted, because that is irrelevant for checking if the answer is correct
- */
+//========================================================================================
+// Converts the grid's state to a Melody that contains relative notes
+// Midi notes are not inserted, because that is irrelevant
+// for checking if the answer is correct
+
 
 class GridToMelodyConverter
 {
 public:
+    
+    GridToMelodyConverter() = default;
+    
     virtual ~GridToMelodyConverter() { }
     
     virtual Melody convertGridToMelody(const Array<int>& gridState)
@@ -45,16 +50,16 @@ private:
         return relativeNotes[index];
     }
     
-   // JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(GridToMelodyConverter)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(GridToMelodyConverter)
 };
 
-/****************************************************************************************/
 
+//===============================================================================================
 // GridTileComponent should be ReferenceCountedObject in ValueTree, because it doesn't
 // matter what it's state was the previous time you use this app
 // the index is defined by it's Identifier
 
-class GridDisplayComponent::GridTileComponent     : public Component, public TreeListener
+class GridDisplayComponent::GridTileComponent final     : public Component, public TreeListener
 {
 public:
     
@@ -117,12 +122,14 @@ public:
         if(tree.hasType(tileIdentifier))
         {
             if(id == IDs::Grid::TileState)
-                setTileStateFromString(tree.getPropertyAsValue(IDs::Grid::TileState, nullptr).toString());
+                setTileStateFromString(tree.getProperty(id));
             
             if(id == IDs::Grid::TileSetable)
                 isSetable = tree.getProperty(IDs::Grid::TileSetable);
-        }
             
+            if(id == IDs::Grid::TileText)
+                tileText = tree.getProperty(id);
+        }
     }
     
     void resized() override { }
@@ -185,7 +192,6 @@ private:
         return tileState == TileState::tileActive ? tileInactiveColour : tileActiveColour;
     }
     
-    //gets the colour, all factors concidered;
     Colour getCurrentFillColour() const
     {
         if(mouseDownOnTile)         return mouseDownColour;
@@ -245,14 +251,18 @@ private:
 };
 
 
-/*******************************************************************************************/
+//===============================================================================================
 
 
 GridDisplayComponent::GridDisplayComponent(ValueTree& t, int numColumns, int numRows, const StringArray& rowsText) :
     numRows(numRows),
-    numColumns(numColumns),
-    tree(t)
+    numColumns(numColumns)
 {
+    
+    tree = ValueTree { IDs::Grid::GridRoot };
+    t.appendChild(tree, nullptr);
+    
+    
     jassert(numRows == rowsText.size());
     
     tileIdentifiers.resize(numColumns);
@@ -278,6 +288,7 @@ GridDisplayComponent::GridDisplayComponent(ValueTree& t, int numColumns, int num
             
             addAndMakeVisible(tileptr);
             
+            childTile.setProperty(IDs::Grid::TileText, rowsText[row], nullptr);
             
             tree.appendChild(childTile, nullptr);
         }
@@ -338,14 +349,6 @@ void GridDisplayComponent::setSpaceBetweenTiles(int space) noexcept
     repaint();
 }
 
-// FIX ME
-Array<int> GridDisplayComponent::getGridStates() const noexcept
-{
-    Array<int> states;
-
-    return states;
-}
-
 
 void GridDisplayComponent::setStateForTile(int column, int row, TileState state) noexcept
 {
@@ -368,6 +371,9 @@ void GridDisplayComponent::setSetabilityTile(int column, int row, bool settable)
 void GridDisplayComponent::setSetabilityColumn(int column, bool settable) noexcept
 {
     jassert(column < numColumns);
+    
+    for(int r = 0; r < numRows; ++r)
+        setSetabilityTile(column, r, settable);
 }
 
 int GridDisplayComponent::getNumRows() const noexcept       { return numRows; }
@@ -402,11 +408,6 @@ void GridDisplayComponent::turnOffAllRowsInColumnExceptThisOne(int column, int i
             auto tile = tree.getChildWithName(tileIndexToIdentifier(column, row));
             tile.setProperty(IDs::Grid::TileState, tileStateToString(TileState::tileInactive), nullptr);
         }
-}
-
-Melody GridDisplayComponent::getGridStateAsMelody() noexcept
-{
-    return gridToMelodyConverter->convertGridToMelody(getGridStates());
 }
 
 
@@ -459,3 +460,4 @@ std::tuple<int, int> GridDisplayComponent::tileIndexFromIdentifier(Identifier id
 }
 
 
+//===============================================================================================

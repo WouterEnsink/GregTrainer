@@ -10,12 +10,17 @@
 
 #include "TrainerEngine.h"
 #include "Synth.h"
+#include "Identifiers.h"
 
-TrainerEngine::TrainerEngine(ValueTree& tree) : engineState(tree)
+TrainerEngine::TrainerEngine(ValueTree& tree)
 {
-    currentNumNotesInMelody = 8;
-    noteLength = 300;
-    timeBetweenNotes = 400;
+    engineState = ValueTree { IDs::Engine::EngineRoot };
+    engineState.addListener(this);
+    tree.appendChild(engineState, nullptr);
+    
+    setTimeBetweenNotesInMs(500);
+    setNoteLengthInMs(400);
+    setNumNotesInMelody(8);
     
     playbackInstrument.reset(new SineWaveSynthesizer());
 }
@@ -25,7 +30,7 @@ TrainerEngine::~TrainerEngine()
     
 }
 
-//===================================================================
+//==================================================================================
 
 
 void TrainerEngine::prepareToPlay(int numSamplesPerBlockExpected, double sampleRate)
@@ -59,22 +64,22 @@ void TrainerEngine::releaseResources()
 }
 
 
-//===================================================================
+//==================================================================================
 
 
-void TrainerEngine::setMelodyLength(int numNotes)
+void TrainerEngine::setNumNotesInMelody(int numNotes)
 {
     melodyGenerator.setNumNotesInMelody(numNotes);
 }
 
-void TrainerEngine::setNoteIntervalTime(int intervalTimeMs)
+void TrainerEngine::setTimeBetweenNotesInMs(int intervalTimeMs)
 {
-    midiGenerator.setTimeBetweenNotes(intervalTimeMs);
+    midiGenerator.setTimeBetweenNotesInMs(intervalTimeMs);
 }
 
-void TrainerEngine::setNoteLength(int timeInMs)
+void TrainerEngine::setNoteLengthInMs(int timeInMs)
 {
-    midiGenerator.setNoteLength(timeInMs);
+    midiGenerator.setNoteLengthInMs(timeInMs);
 }
 
 void TrainerEngine::generateNextMelody()
@@ -86,10 +91,6 @@ void TrainerEngine::generateNextMelody()
 
 void TrainerEngine::startPlayingMelody()
 {
-    setNoteIntervalTime(timeBetweenNotes);
-    setNoteLength(noteLength);
-    setMelodyLength(currentNumNotesInMelody);
-    
     midiGenerator.startPlaying();
 }
 
@@ -104,12 +105,14 @@ void TrainerEngine::checkIfMelodyIsSameAsPlayed(Melody&)
 }
 
 
-//===================================================================
+//==================================================================================
 
-void TrainerEngine::valueTreePropertyChanged(ValueTree&, const Identifier&)
+void TrainerEngine::valueTreePropertyChanged(ValueTree& t, const Identifier& id)
 {
-    
+    print("Engine: Tree:", t.getType().toString(), "ID:", id.toString(), "value:", t[id].toString());
 }
+
+//==================================================================================
 
 bool TrainerEngine::openInstrumentEditor()
 {

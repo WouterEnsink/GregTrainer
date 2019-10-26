@@ -3,9 +3,11 @@
 #include "MainComponent.h"
 #include "Identifiers.h"
 
-/** compares two melodies, should probably be put in a class that also handles giving visual feedback
- ** to the user
- */
+
+//===============================================================================================
+// compares two melodies, should probably be put in a class that also handles giving visual feedback
+// to the user
+
 
 void compareRelativeMelodies(const Melody& actualMelody, const Melody& gridMelody)
 {
@@ -24,7 +26,7 @@ void compareRelativeMelodies(const Melody& actualMelody, const Melody& gridMelod
 }
 
 
-//==============================================================================
+//===============================================================================================
 
 
 MainComponent::MainComponent(ValueTree& t) :
@@ -45,25 +47,36 @@ MainComponent::MainComponent(ValueTree& t) :
     }, [this](Component& c){ addAndMakeVisible(c); });
     
     
-    playButton.onClick = [this]{
-        //audioSource.startPlaying(melody.noteLength, melody.timeBetweenNotes, melody.midiNotes);
+    playButton.onClick = [this]
+    {
         trainerEngine.startPlayingMelody();
         playButton.setButtonText("Play Again");
     };
     
-    generateButton.onClick = [this]{
-       // melody = melodyGenerator.generateMelody(8);
+    generateButton.onClick = [this]
+    {
         gridDisplay.turnAllTilesOff();
-      //  gridDisplay.setStateForTile(gridDisplay.getNumColumns()-1,
-      //                              gridDisplay.getNumRows() - melody.normalizedGroundNoteIndex - 1,
-      //                              GridDisplayComponent::TileState::tileActive);
+        Random rand;
+        gridDisplay.setStateForTile(gridDisplay.getNumColumns()-1,
+                                   rand.nextInt(gridDisplay.getNumRows() - 1),
+                                   GridDisplayComponent::TileState::tileActive);
+        
+        gridDisplay.setSetabilityColumn(gridDisplay.getNumColumns()-1, false);
+        
         trainerEngine.generateNextMelody();
         playButton.setButtonText("Start Playing");
+        
+        if (auto engine = tree.getChildWithName(IDs::Engine::EngineRoot); engine.isValid())
+        {
+            engine.setProperty(IDs::Engine::PlayState, "new playstate", nullptr);
+        }
         
         
     };
     
-    submitButton.onClick = [this]{
+    
+    submitButton.onClick = [this]
+    {
         answerLabel.setText("You Suck", NotificationType::dontSendNotification);
        // compareRelativeMelodies(melody, gridDisplay.getGridStateAsMelody());
     };
@@ -88,7 +101,9 @@ MainComponent::~MainComponent()
     shutdownAudio();
 }
 
-//==============================================================================
+//===============================================================================================
+
+
 void MainComponent::prepareToPlay (int samplesPerBlockExpected, double sampleRate)
 {
     trainerEngine.prepareToPlay(samplesPerBlockExpected, sampleRate);
@@ -118,19 +133,21 @@ void MainComponent::initializeAudioSettings()
     }
 }
 
-//==============================================================================
+//===============================================================================================
+
 void MainComponent::paint (Graphics& g)
 {
     g.fillAll (Colours::black);
 }
 
+
 void MainComponent::resized()
 {
-    setSize(800, 600); //makes window nonresizable
+    setSize(800, 600); // makes window nonresizable
     
     auto r = Rectangle { 50, 25, 200, 50 };
     
-    //set bounds for buttons with even spacing
+    // set bounds for buttons with even spacing
     visitComponents({ &playButton, &generateButton, &submitButton },
                     [&r](auto& c) { c.setBounds(r); r.translate(250, 0); });
     

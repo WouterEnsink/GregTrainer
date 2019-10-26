@@ -13,12 +13,14 @@
 #include "MidiGenerator.h"
 #include "Synth.h"
 
-/* Main audio source to use in the trainer.
- * In the future this should become part of a generalized engine,
- * toghether with the MelodyGenerator to have all sound related stuff linked together
- * without any Component being the bridge..
- */
+//===============================================================================================
+// Main audio source to use in the trainer.
+// In the future this should become part of a generalized engine,
+// toghether with the MelodyGenerator to have all sound related stuff linked together
+// without any Component being the bridge..
 
+
+// DEPRECATED
 
 class TrainerAudioSource : public AudioSource
 {
@@ -33,8 +35,8 @@ public:
     void startPlaying(int noteLength, int timeInterval, const Array<int>& notes) noexcept
     {
         midiGenerator.setNotes(notes);
-        midiGenerator.setTimeBetweenNotes(timeInterval);
-        midiGenerator.setNoteLength(noteLength);
+        midiGenerator.setTimeBetweenNotesInMs(timeInterval);
+        midiGenerator.setNoteLengthInMs(noteLength);
         midiGenerator.startPlaying();
     }
     

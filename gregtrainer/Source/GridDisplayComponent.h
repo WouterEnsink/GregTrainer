@@ -17,22 +17,20 @@
 
 
 
-/*****************************************************************************************************/
+//==========================================================================
+// Converts the grid's state to a Melody that contains relative notes
+// Midi notes are not inserted, because that is irrelevant
+// for checking if the answer is correct
 
-/* Converts the grid's state to a Melody that contains relative notes
- * Midi notes are not inserted, because that is irrelevant for checking if the answer is correct
- */
 
 class GridToMelodyConverter;
 
 
-/*****************************************************************************************************/
+//==========================================================================
+// The Grid to be used by the player to fill in their guess
 
-/* Should be updated to remove the GridColumnComponent class
- * as that was just an ugly but quick solution
- */
 
-class GridDisplayComponent  : public Component, public TreeListener
+class GridDisplayComponent final  : public Component, public TreeListener
 {
 public:
     
@@ -48,17 +46,15 @@ public:
         tileRightAnswer
     };
     
-    static String tileStateToString(TileState state);
-    static TileState tileStateFromString(String);
+    //======================================================================
     
     void paint(Graphics& g) override;
     
     void resized() override;
     
-    void setSpaceBetweenTiles(int space) noexcept;
+    //======================================================================
     
-    // returns array with wich row is on in each column
-    Array<int> getGridStates() const noexcept;
+    void setSpaceBetweenTiles(int space) noexcept;
     
     void setStateForTile(int column, int row, TileState on) noexcept;
     
@@ -66,25 +62,35 @@ public:
     
     void setSetabilityColumn(int column, bool settable) noexcept;
     
+    void turnAllTilesOff() noexcept;
+    
+    //======================================================================
+    
     int getNumRows() const noexcept;
     
     int getNumColumns() const noexcept;
     
-    void turnAllTilesOff() noexcept;
-    
-    Melody getGridStateAsMelody() noexcept;
-    
-    Rectangle<int> getBoundsForTile(int column, int row);
+    //======================================================================
     
     static Identifier tileIndexToIdentifier(int column, int row);
     
     static std::tuple<int, int> tileIndexFromIdentifier(Identifier);
+    
+    static String tileStateToString(TileState state);
+    
+    static TileState tileStateFromString(String);
+    
+    //======================================================================
     
 private:
     
     class GridTileComponent;
     
     void turnOffAllRowsInColumnExceptThisOne(int column, int row);
+    
+    Rectangle<int> getBoundsForTile(int column, int row);
+    
+    //======================================================================
     
     void valueTreePropertyChanged(ValueTree&, const Identifier&) override;
     
@@ -97,7 +103,6 @@ private:
     
     OwnedArray<OwnedArray<GridTileComponent>> tiles;
     
-    // all Identifiers are predefined, to safe processing power
     Array<Array<Identifier>> tileIdentifiers;
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(GridDisplayComponent)

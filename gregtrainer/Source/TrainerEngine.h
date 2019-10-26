@@ -14,6 +14,9 @@
 #include "MelodyGenerator.h"
 #include "MidiGenerator.h"
 
+//=======================================================================
+// This is the main engine for the trainer
+// it provides everything we need that is not the interface
 
 class TrainerEngine final   : public TreeListener, public AudioSource
 {
@@ -33,11 +36,11 @@ public:
     
     //===================================================================
     
-    void setMelodyLength(int);
+    void setNumNotesInMelody(int);
     
-    void setNoteIntervalTime(int);
+    void setTimeBetweenNotesInMs(int);
     
-    void setNoteLength(int);
+    void setNoteLengthInMs(int);
     
     void generateNextMelody();
     
@@ -55,6 +58,7 @@ public:
     
     bool openInstrumentEditor();
     
+    //===================================================================
     
 private:
     
@@ -71,6 +75,7 @@ private:
     MelodyGenerator melodyGenerator;
     MidiGenerator midiGenerator;
     
+    //===================================================================
     // maybe the engine should use a reference counted melody object
     // since this is compatible with the value tree
     // and we don't need to safe or restore any melodies

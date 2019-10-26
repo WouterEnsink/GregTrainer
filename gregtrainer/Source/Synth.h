@@ -146,6 +146,7 @@ public:
 
 
 //==============================================================================
+// basic implementation of the simple synth
 
 class SineWaveSynthesizer   : public InternalProcessorBase
 {
@@ -164,7 +165,6 @@ public:
     
     void releaseResources () override
     {
-        
     }
     
     void processBlock (AudioBuffer<float>& buffer, MidiBuffer& midiMessages) override

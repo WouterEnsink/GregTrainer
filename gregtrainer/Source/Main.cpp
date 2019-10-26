@@ -4,6 +4,7 @@
 #include "MainComponent.h"
 
 //==============================================================================
+
 class GregTrainerApplication  : public JUCEApplication
 {
 public:
@@ -50,7 +51,7 @@ public:
         MainWindow (String name)  : DocumentWindow (name,
                                                     Desktop::getInstance().getDefaultLookAndFeel()
                                                                           .findColour (ResizableWindow::backgroundColourId),
-                                                    DocumentWindow::allButtons), tree("Properties")
+                                                    DocumentWindow::allButtons), tree(IDs::GlobalRoot)
         {
             setUsingNativeTitleBar (true);
             setContentOwned (new MainComponent(tree), true);

@@ -13,8 +13,8 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "Utility.h"
 
-/* This structure represents everything we need to know about a melody in this program
- */
+//===============================================================================================
+// This structure represents everything we need to know about a melody in this program
 
 struct Melody final
 {
@@ -28,17 +28,17 @@ struct Melody final
 
 
 
+//===============================================================================================
+// MelodyGenerator is the source for all training material in the program
+//
+// In MelodyGenerator there are 3 terms for note, which makes things a little confusing
+// we have:
+//      - Midi Notes that are the normal, known midi notes
+//      - Normalized notes that are Midi Notes in terms of their distances, just reduces to lower numbers
+//        to make it easier to work with them to generate new midi
+//      - Index notes, which are basically the index at which you can find a note in the array of normalized notes,
+//        these are neccesairy to make modulation possible without very complex algorithms
 
-/* MelodyGenerator is the source for all training material in the program
- *
- * In MelodyGenerator there are 3 terms for note, which makes things a little confusing
- * we have:
- *      - Midi Notes that are the normal, known midi notes
- *      - Normalized notes that are Midi Notes in terms of their distances, just reduces to lower numbers
- *        to make it easier to work with them to generate new midi
- *      - Index notes, which are basically the index at which you can find a note in the array of normalized notes,
- *        these are neccesairy to make modulation possible without very complex algorithms
- */
 
 class MelodyGenerator final
 {
@@ -98,15 +98,13 @@ public:
     {
         Array<int> notes;
         
-        notes.resize(numNotes);
-        
         Array distances = { 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 2, 3, 4 };
         
         auto groundIndex = getIndexGroundNoteForMode(mode);
         
         auto currentNoteIndex = groundIndex;
         
-        notes.set(0, normalizedMidiNoteDistances[currentNoteIndex]);
+        notes.add(normalizedMidiNoteDistances[currentNoteIndex]);
         
         for(int i = 1; i < numNotes; ++i)
         {
@@ -121,7 +119,7 @@ public:
             
             if(currentNoteIndex < 0) currentNoteIndex = 0;
 
-            notes.set(i, normalizedMidiNoteDistances[currentNoteIndex]);
+            notes.add(normalizedMidiNoteDistances[currentNoteIndex]);
         }
         
         std::reverse(std::begin(notes), std::end(notes));
