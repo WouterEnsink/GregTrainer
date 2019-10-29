@@ -12,17 +12,60 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "Utility.h"
+#include "Identifiers.h"
 
 //===============================================================================================
 // This structure represents everything we need to know about a melody in this program
 
-struct Melody final
+class Melody final   : public ReferenceCountedObject
 {
-    int numNotes;
-    int normalizedGroundNoteIndex;
+public:
+    using Ptr = ReferenceCountedObjectPtr<Melody>;
+    
+    Melody (String mode, Array<int> relativeNotes, int normalizedGround,
+            int midiOffset, int noteLength, int timeBetweenNotes) :
+        mode (mode),
+        relativeNotes (relativeNotes),
+        normalizedGroundNoteIndex (normalizedGround),
+        midiOffset (midiOffset),
+        noteLength (noteLength),
+        timeBetweenNotes (timeBetweenNotes)
+    {
+    }
+    
+    ~Melody() {}
+    
+    int getNumNotes() const
+    {
+        return relativeNotes.size();
+    }
+    
+    Array<int> getMidiNotes() const
+    {
+        auto midiNotes = relativeNotes;
+        
+        for (auto& note : midiNotes)
+            note += midiOffset;
+        
+        return midiNotes;
+    }
+    
+    int getTimeBetweenNotes() const
+    {
+        return timeBetweenNotes;
+    }
+    
+    int getNoteLength() const
+    {
+        return noteLength;
+    }
+    
+private:
+    
     String mode;
     Array<int> relativeNotes;
-    Array<int> midiNotes;
+    int normalizedGroundNoteIndex;
+    int midiOffset;
     int noteLength, timeBetweenNotes;
 };
 
@@ -44,25 +87,30 @@ class MelodyGenerator final
 {
 public:
     
-    Melody generateMelody (int numNotes) noexcept
+    MelodyGenerator (ValueTree& t, int numNotes)  : tree (t), numNotes (numNotes) {}
+    
+    // Fix Me
+    Array<int> compareMelodiesAndGetDifference (Melody::Ptr first, Melody::Ptr second) const
+    {
+        return { };
+    }
+    
+    Melody::Ptr generateMelody (int numNotes) noexcept
     {
         auto mode = getRandomMode();
         
-        auto relativeNotes = generateRelativeNotesForMode(mode, numNotes);
+        auto relativeNotes = generateRelativeNotesForMode (mode, numNotes);
         
-        auto groundNoteIndex = getIndexGroundNoteForMode(mode);
+        auto groundNoteIndex = getIndexGroundNoteForMode (mode);
         
-        print("mode:", mode);
+        auto midiOffset = generateRandomMidiOffset();
         
-        return {
-            .numNotes = numNotes,
-            .normalizedGroundNoteIndex = groundNoteIndex,
-            .mode = mode,
-            .relativeNotes = relativeNotes,
-            .midiNotes = generateMidiNotesFromRelativeNotes(relativeNotes),
-            .noteLength = 200,
-            .timeBetweenNotes = 400
-        };
+        auto timeBetweenNotes = 400;
+        auto noteLength = 200;
+        
+        print ("mode:", mode);
+        
+        return new Melody { mode, relativeNotes, groundNoteIndex, midiOffset, noteLength, timeBetweenNotes };
     }
     
     void setNumNotesInMelody (int num)
@@ -70,25 +118,32 @@ public:
         numNotes = num;
     }
     
-    Melody generateMelody() { return generateMelody(numNotes); }
+    int generateRandomMidiOffset() { return random.nextInt (12) + 60; }
     
-    String getRandomMode() noexcept { return modes[random.nextInt(modes.size())]; }
+    void generateMelody()
+    {
+        Melody::Ptr melody = generateMelody (numNotes);
+        tree.setProperty (IDs::Engine::EngineMelody, melody.get(), nullptr);
+    }
+    
+    String getRandomMode() noexcept { return modes[random.nextInt (modes.size())]; }
     
     int getIndexGroundNoteForMode (const String& mode) const noexcept
     {
-        if(mode == "D") return 1;
-        if(mode == "E") return 2;
-        if(mode == "F") return 3;
-        if(mode == "G") return 4;
+        if (mode == "D") return 1;
+        if (mode == "E") return 2;
+        if (mode == "F") return 3;
+        if (mode == "G") return 4;
         return 0;
     }
     
     
     Array<int> generateMidiNotesFromRelativeNotes (Array<int> relativeNotes) noexcept
     {
-        auto transpose = random.nextInt(12) + 60;
+        auto transpose = random.nextInt (12) + 60;
         
-        for (auto& note : relativeNotes) note += transpose;
+        for (auto& note : relativeNotes)
+            note += transpose;
         
         return relativeNotes;
     }
@@ -100,7 +155,7 @@ public:
         
         Array distances = { 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 2, 3, 4 };
         
-        auto groundIndex = getIndexGroundNoteForMode(mode);
+        auto groundIndex = getIndexGroundNoteForMode (mode);
         
         auto currentNoteIndex = groundIndex;
         
@@ -110,14 +165,15 @@ public:
         {
             auto direction = random.nextInt (2) ? 1 : -1;
 
-            auto interval = direction * distances[random.nextInt(distances.size())];
+            auto interval = direction * distances[random.nextInt (distances.size())];
 
             currentNoteIndex += interval;
 
-            if (currentNoteIndex > normalizedMidiNoteDistances.size()-1)
-                currentNoteIndex = normalizedMidiNoteDistances.size()-1;
+            if (currentNoteIndex > normalizedMidiNoteDistances.size() - 1)
+                currentNoteIndex = normalizedMidiNoteDistances.size() - 1;
             
-            if (currentNoteIndex < 0) currentNoteIndex = 0;
+            if (currentNoteIndex < 0)
+                currentNoteIndex = 0;
 
             notes.add (normalizedMidiNoteDistances[currentNoteIndex]);
         }
@@ -128,6 +184,8 @@ public:
     }
    
     Random random;
+    
+    ValueTree tree;
     
     const Array<String> modes { "D", "E", "F", "G" };
     int numNotes;

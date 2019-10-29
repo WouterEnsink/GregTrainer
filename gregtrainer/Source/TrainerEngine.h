@@ -18,11 +18,20 @@
 // This is the main engine for the trainer
 // it provides everything we need that is not the interface
 
-class TrainerEngine final   : public TreeListener, public AudioSource, public AsyncUpdater
+class TrainerEngine final   : public TreeListener,
+                              public AudioSource,
+                              private AsyncUpdater
 {
 public:
     
-    TrainerEngine (ValueTree&);
+    enum class PlayState
+    {
+        playing,
+        checkingAnswer,
+        stopped
+    };
+    
+    TrainerEngine (ValueTree&, int numNotes);
     
     ~TrainerEngine();
     
@@ -64,13 +73,9 @@ public:
     
 private:
     
-    Melody currentMelody;
-    
-    
-    
-    int currentNumNotesInMelody, noteLength, timeBetweenNotes;
-    
     ValueTree engineState;
+    
+    CachedValue<PlayState> playState;
     
     std::unique_ptr<AudioProcessor> playbackInstrument;
     
@@ -86,4 +91,32 @@ private:
     // this way everything is notified automatically when the new melody is generated..
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(TrainerEngine)
+};
+
+
+
+
+template <>
+class VariantConverter<TrainerEngine::PlayState> final
+{
+public:
+    using State = TrainerEngine::PlayState;
+    
+    static var toVar (const State& state)
+    {
+        if (state == State::playing)        return "p";
+        if (state == State::checkingAnswer) return "c";
+        if (state == State::stopped)        return "s";
+        
+        return "undefined";
+    }
+    
+    static State fromVar (const var& state)
+    {
+        if (state == "p") return State::playing;
+        if (state == "c") return State::checkingAnswer;
+        if (state == "s") return State::stopped;
+        
+        return State::stopped;
+    }
 };

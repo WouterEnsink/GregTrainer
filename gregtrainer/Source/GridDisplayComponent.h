@@ -18,25 +18,19 @@
 
 
 //==========================================================================
-// Converts the grid's state to a Melody that contains relative notes
-// Midi notes are not inserted, because that is irrelevant
-// for checking if the answer is correct
-
-
-class GridToMelodyConverter;
-
-
-//==========================================================================
 // The Grid to be used by the player to fill in their guess
 
-
-class GridDisplayComponent final  : public Component, public TreeListener
+class GridDisplayComponent final   : public  Component,
+                                     private ValueTree::Listener
 {
 public:
     
-    GridDisplayComponent (ValueTree&, int numColumns, int numRows, const StringArray& rowsText);
+    GridDisplayComponent (ValueTree&, int numColumns, int numRows,
+                          const StringArray& rowsText, const Array<int>& relativeNotes);
     
     ~GridDisplayComponent();
+    
+    //======================================================================
     
     enum class TileState
     {
@@ -72,40 +66,31 @@ public:
     
     //======================================================================
     
-    static Identifier tileIndexToIdentifier (int column, int row);
-    
-    static std::tuple<int, int> tileIndexFromIdentifier (Identifier);
-    
-    //======================================================================
-    
-    void valueTreePropertyChanged (ValueTree&, const Identifier&) override;
-    
-    //======================================================================
-    
 private:
     
     class GridTileComponent;
-    
-    void setAllRowsInColumnInactiveExceptThisOne (int column, int row);
-    
-    Rectangle<int> getBoundsForTile (int column, int row);
-    
+
     //======================================================================
     
-    
-    
     int spaceBetweenTiles, halfSpaceBetweenTiles;
-    int numRows, numColumns;
     
-    std::unique_ptr<GridToMelodyConverter> gridToMelodyConverter;
+    int numRows, numColumns;
     
     ValueTree tree;
     
     OwnedArray<OwnedArray<GridTileComponent>> tiles;
     
-    Array<Array<Identifier>> tileIdentifiers;
+    //======================================================================
     
-    static void initializeTileIdentifiers (int, int);
+    
+    void initializeGridTiles (const StringArray&, const Array<int>&);
+    void setDefaultColours();
+    void setAllRowsInColumnInactiveExceptThisOne (int column, int row);
+    auto getBoundsForTile (int column, int row) -> Rectangle<int>;
+    
+    void valueTreePropertyChanged (ValueTree&, const Identifier&) override;
+    
+    //======================================================================
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(GridDisplayComponent)
     

@@ -25,8 +25,6 @@
         <FILE id="J1XduX" name="TrainerEngine.h" compile="0" resource="0" file="Source/TrainerEngine.h"/>
         <FILE id="KXPbtM" name="MelodyGenerator.h" compile="0" resource="0"
               file="Source/MelodyGenerator.h"/>
-        <FILE id="NtPRkw" name="TrainerAudioSource.h" compile="0" resource="0"
-              file="Source/TrainerAudioSource.h"/>
         <FILE id="WZShCK" name="MidiGenerator.h" compile="0" resource="0" file="Source/MidiGenerator.h"/>
         <FILE id="OlRCwg" name="Synth.h" compile="0" resource="0" file="Source/Synth.h"/>
       </GROUP>

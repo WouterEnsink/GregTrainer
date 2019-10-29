@@ -5,35 +5,13 @@
 
 
 //===============================================================================================
-// compares two melodies, should probably be put in a class that also handles giving visual feedback
-// to the user
-
-
-void compareRelativeMelodies (const Melody& actualMelody, const Melody& gridMelody)
-{
-    if (actualMelody.relativeNotes.size() != gridMelody.relativeNotes.size())
-        print ("melodies not the same length");
-    
-    for (int i = 0; i < actualMelody.numNotes; ++i)
-    {
-        if (actualMelody.relativeNotes[i] != gridMelody.relativeNotes[i])
-        {
-            print ("note", i, "not the same:", "actual note:", actualMelody.relativeNotes[i],
-                   "grid note:", gridMelody.relativeNotes[i]);
-        }
-        else
-        {
-            print ("note ", i, "is the same");
-        }
-    }
-}
-
-
-//===============================================================================================
 
 
 MainComponent::MainComponent (ValueTree& t) :
-    tree(t), gridDisplay(tree, 8, 8, { "C", "B", "A", "G", "F", "E", "D", "C" }), trainerEngine(tree)
+                                                tree (t),
+                                                gridDisplay (tree, 8, 8, { "C", "B", "A", "G", "F", "E", "D", "C" },
+                                                             { 12, 11, 9, 7, 5, 4, 2, 0 }),
+                                                trainerEngine (tree, 8)
 {
     setSize (800, 600);
 
@@ -47,16 +25,16 @@ MainComponent::MainComponent (ValueTree& t) :
         &answerLabel,
         &infoButton,
         &colourPickButton
-    }, [this](Component& c){ addAndMakeVisible(c); });
+    }, [this] (Component& c) { addAndMakeVisible (c); });
     
     
-    playButton.onClick = [this]
+    playButton.onClick = [this]()
     {
         trainerEngine.startPlayingMelody();
-        playButton.setButtonText("Play Again");
+        playButton.setButtonText ("Play Again");
     };
     
-    generateButton.onClick = [this]
+    generateButton.onClick = [this]()
     {
         gridDisplay.turnAllTilesOff();
         Random rand;
@@ -81,17 +59,19 @@ MainComponent::MainComponent (ValueTree& t) :
     submitButton.onClick = [this]
     {
         answerLabel.setText ("You Suck", NotificationType::dontSendNotification);
-       // compareRelativeMelodies(melody, gridDisplay.getGridStateAsMelody());
     };
     
-    infoButton.onClick = [this]{
+    infoButton.onClick = [this]()
+    {
         auto* infoPanel = new InfoPanelComponent();
         infoPanel->setSize (400, 200);
         CallOutBox::launchAsynchronously (infoPanel, infoButton.getScreenBounds(), nullptr);
     };
     
-    colourPickButton.onClick = [this]{
-        if (! colourPicker) colourPicker.reset (new ColourPickerWindow(tree, [this] { colourPicker = nullptr; }));
+    colourPickButton.onClick = [this]()
+    {
+        if (colourPicker == nullptr)
+            colourPicker.reset (new ColourPickerWindow(tree, [this]() { colourPicker = nullptr; }));
     };
     
     

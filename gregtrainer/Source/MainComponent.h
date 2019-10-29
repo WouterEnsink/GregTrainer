@@ -4,7 +4,6 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "GridDisplayComponent.h"
-#include "TrainerAudioSource.h"
 #include "MelodyGenerator.h"
 #include "TrainerEngine.h"
 #include "ExtraMenus.h"

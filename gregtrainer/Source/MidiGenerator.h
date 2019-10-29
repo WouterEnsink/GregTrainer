@@ -34,14 +34,18 @@ public:
         recalculateSettings();
     }
     
-    void setNotes (const Array<int>& notes) noexcept
+    void setMelody (Melody::Ptr melody) noexcept
     {
-        notesToPlay = notes;
-    }
-    
-    void setMelody (Melody& m) noexcept
-    {
-        notesToPlay = m.midiNotes;
+        if (melody != nullptr)
+        {
+            notesToPlay = melody->getMidiNotes();
+            setTimeBetweenNotesInMs (melody->getTimeBetweenNotes());
+            setNoteLengthInMs (melody->getNoteLength());
+        }
+        else
+        {
+            print ("error MidiGenerator::setMelody: melody == nullptr");
+        }
     }
     
     // set note length needs to be called after this one

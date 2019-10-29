@@ -12,16 +12,14 @@
 #include "Synth.h"
 #include "Identifiers.h"
 
-TrainerEngine::TrainerEngine (ValueTree& tree) : engineState {IDs::Engine::EngineRoot}
+TrainerEngine::TrainerEngine (ValueTree& tree, int numNotes) :
+        engineState {IDs::Engine::EngineRoot}, melodyGenerator (engineState, numNotes)
 {
     
     engineState.addListener (this);
     tree.appendChild (engineState, nullptr);
-    isPlaying.referTo (engineState, IDs::Engine::PlayState, nullptr);
     
-    setTimeBetweenNotesInMs (500);
-    setNoteLengthInMs (400);
-    setNumNotesInMelody (8);
+    playState.referTo (engineState, IDs::Engine::PlayState, nullptr, PlayState::stopped);
     
     playbackInstrument.reset (new SineWaveSynthesizer());
 }
@@ -85,9 +83,9 @@ void TrainerEngine::setNoteLengthInMs (int timeInMs)
 
 void TrainerEngine::generateNextMelody()
 {
-    currentMelody = melodyGenerator.generateMelody();
+    melodyGenerator.generateMelody();
     
-    midiGenerator.setNotes (currentMelody.midiNotes);
+    midiGenerator.setMelody (dynamic_cast<Melody*> (engineState[IDs::Engine::EngineMelody].getObject()));
 }
 
 void TrainerEngine::startPlayingMelody()
@@ -110,8 +108,8 @@ void TrainerEngine::checkIfMelodyIsSameAsPlayed (Melody&)
 
 void TrainerEngine::valueTreePropertyChanged (ValueTree& t, const Identifier& id)
 {
-    print ("Engine: Tree:", t.getType().toString(), "ID:", id.toString(), "value:", t[id].toString());
-    triggerAsyncUpdate();
+    if (id == IDs::Engine::PlayState)
+        triggerAsyncUpdate();
 }
 
 //==================================================================================
@@ -121,7 +119,12 @@ bool TrainerEngine::openInstrumentEditor()
     return playbackInstrument->hasEditor();
 }
 
+// handleAsyncUpdate handles the state changes
 void TrainerEngine::handleAsyncUpdate()
 {
-    print ("cached value:", isPlaying.get());
+    if (playState == PlayState::playing)
+        startPlayingMelody();
+    
+    if (playState == PlayState::stopped)
+        stopPlayingMelody();
 }

@@ -2367,9 +2367,6 @@
     <ClInclude Include="..\..\Source\MelodyGenerator.h">
       <Filter>Gregorian Ear Trainer\Source\Engine</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\TrainerAudioSource.h">
-      <Filter>Gregorian Ear Trainer\Source\Engine</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\Source\MidiGenerator.h">
       <Filter>Gregorian Ear Trainer\Source\Engine</Filter>
     </ClInclude>

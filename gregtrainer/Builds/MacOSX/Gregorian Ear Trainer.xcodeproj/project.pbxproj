@@ -462,13 +462,6 @@
 			path = "../../JuceLibraryCode/include_juce_audio_basics.mm";
 			sourceTree = "SOURCE_ROOT";
 		};
-		BE9D1C2DDDC26AD625A2BAE3 = {
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.h;
-			name = TrainerAudioSource.h;
-			path = ../../Source/TrainerAudioSource.h;
-			sourceTree = "SOURCE_ROOT";
-		};
 		C4446A7BE8D3518C3D6672B6 = {
 			isa = PBXFileReference;
 			lastKnownFileType = text.plist.xml;
@@ -581,7 +574,6 @@
 				47E6C5F2D737BC72812DC064,
 				6175F7468FF2A8B9E2C73FFE,
 				908CCF82A614FB5179166227,
-				BE9D1C2DDDC26AD625A2BAE3,
 				129BDE1600E419BED28FDBD0,
 				32D89AB3E1CDA1837C4C3581,
 			);

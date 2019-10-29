@@ -118,20 +118,20 @@ private:
 
 
 //==============================================================================
-// to make use of more generic audio processors possible in the engine
+// To make use of more generic audio processors possible in the engine
 
-class InternalProcessorBase  : public AudioProcessor
+class InternalProcessorBase    : public AudioProcessor
 {
 public:
     AudioProcessorEditor* createEditor() override { return nullptr; }
     bool hasEditor() const override { return false; }
     int getNumPrograms() override { return 0; }
     int getCurrentProgram() override { return 0; }
-    void setCurrentProgram (int index) override {}
-    const String getProgramName (int index) override { return "InternalProcessor"; }
-    void changeProgramName (int index, const String &newName) override {}
-    void getStateInformation (MemoryBlock &destData) override {}
-    void setStateInformation (const void *data, int sizeInBytes) override {}
+    void setCurrentProgram (int) override {}
+    const String getProgramName (int) override { return "InternalProcessor"; }
+    void changeProgramName (int, const String&) override {}
+    void getStateInformation (MemoryBlock&) override {}
+    void setStateInformation (const void*, int) override {}
     
     double getTailLengthSeconds() const override { return 0.0; }
     bool acceptsMidi() const override { return true; }
@@ -139,14 +139,14 @@ public:
     
     const String getName() const override { return "InternalProcessor"; }
     
-    void prepareToPlay (double sampleRate, int maximumExpectedSamplesPerBlock) override {}
+    void prepareToPlay (double, int) override {}
     void releaseResources() override {}
-    void processBlock (AudioBuffer< float > &buffer, MidiBuffer &midiMessages) override {}
+    void processBlock (AudioBuffer<float>&, MidiBuffer&) override {}
 };
 
 
 //==============================================================================
-// basic implementation of the simple synth
+// Basic implementation of the simple sine synth that is used by default
 
 class SineWaveSynthesizer   : public InternalProcessorBase
 {

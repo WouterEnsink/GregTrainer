@@ -95,8 +95,11 @@ private:
     
     void changeListenerCallback (ChangeBroadcaster* broadcaster) override
     {
+        auto gridTree = tree.getChildWithName (IDs::Grid::GridRoot);
+        
+        
         if (broadcaster == selector)
-            tree.setProperty (IDs::Grid::TileColour, selector->getCurrentColour().toString(), nullptr);
+            gridTree.setProperty (IDs::Grid::TileInactiveColour, selector->getCurrentColour().toString(), nullptr);
     }
     
     ColourSelector* selector;
