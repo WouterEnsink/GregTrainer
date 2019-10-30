@@ -532,6 +532,13 @@
 			path = "../../JuceLibraryCode/include_juce_data_structures.mm";
 			sourceTree = "SOURCE_ROOT";
 		};
+		EE369FAC8323EC6FC8EC1DEE = {
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = AnswerChecker.h;
+			path = ../../Source/AnswerChecker.h;
+			sourceTree = "SOURCE_ROOT";
+		};
 		F274CD14D89B53E2D43C75B4 = {
 			isa = PBXFileReference;
 			lastKnownFileType = file;
@@ -571,6 +578,7 @@
 		E0065661C1FAF588491141D8 = {
 			isa = PBXGroup;
 			children = (
+				EE369FAC8323EC6FC8EC1DEE,
 				47E6C5F2D737BC72812DC064,
 				6175F7468FF2A8B9E2C73FFE,
 				908CCF82A614FB5179166227,

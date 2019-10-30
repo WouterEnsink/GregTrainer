@@ -2361,6 +2361,9 @@
     <ClInclude Include="..\..\Source\MainComponent.h">
       <Filter>Gregorian Ear Trainer\Source\UserInterface</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Source\AnswerChecker.h">
+      <Filter>Gregorian Ear Trainer\Source\Engine</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\Source\TrainerEngine.h">
       <Filter>Gregorian Ear Trainer\Source\Engine</Filter>
     </ClInclude>

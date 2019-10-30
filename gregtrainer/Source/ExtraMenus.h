@@ -106,6 +106,6 @@ private:
     ValueTree tree;
     std::function<void()> onClosing;
     
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ColourPickerWindow)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ColourPickerWindow)
 };
 

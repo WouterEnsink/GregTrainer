@@ -18,8 +18,8 @@
 // This is the main engine for the trainer
 // it provides everything we need that is not the interface
 
-class TrainerEngine final   : public TreeListener,
-                              public AudioSource,
+class TrainerEngine final   : public  AudioSource,
+                              private ValueTree::Listener,
                               private AsyncUpdater
 {
 public:
@@ -53,6 +53,10 @@ public:
     
     void generateNextMelody();
     
+    // this should put the trainer in checking state until a new
+    // melody is generated (to be implemented)
+    void checkAnswer();
+    
     void startPlayingMelody();
     
     void stopPlayingMelody();
@@ -84,20 +88,15 @@ private:
     MelodyGenerator melodyGenerator;
     MidiGenerator midiGenerator;
     CachedValue<bool> isPlaying;
-    //===================================================================
-    // maybe the engine should use a reference counted melody object
-    // since this is compatible with the value tree
-    // and we don't need to safe or restore any melodies
-    // this way everything is notified automatically when the new melody is generated..
     
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(TrainerEngine)
+    //===================================================================
+    
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (TrainerEngine)
 };
 
 
-
-
 template <>
-class VariantConverter<TrainerEngine::PlayState> final
+class VariantConverter <TrainerEngine::PlayState> final
 {
 public:
     using State = TrainerEngine::PlayState;

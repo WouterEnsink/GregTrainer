@@ -26,7 +26,7 @@ public:
             int midiOffset, int noteLength, int timeBetweenNotes) :
         mode (mode),
         relativeNotes (relativeNotes),
-        normalizedGroundNoteIndex (normalizedGround),
+        groundNoteIndex (normalizedGround),
         midiOffset (midiOffset),
         noteLength (noteLength),
         timeBetweenNotes (timeBetweenNotes)
@@ -35,12 +35,15 @@ public:
     
     ~Melody() {}
     
-    int getNumNotes() const
+    // this is used for answer checking
+    static Ptr createMelodyWithOnlyRelativeNotesInfo (const Array<int>& notes)
     {
-        return relativeNotes.size();
+        return new Melody { "X", notes, 0, 0, 0, 0 };
     }
     
-    Array<int> getMidiNotes() const
+    Array<int> getRelativeNotes() const { return relativeNotes; }
+    
+    Array<int> generateMidiNotes() const
     {
         auto midiNotes = relativeNotes;
         
@@ -50,25 +53,44 @@ public:
         return midiNotes;
     }
     
-    int getTimeBetweenNotes() const
-    {
-        return timeBetweenNotes;
-    }
+    int getNumNotes() const         { return relativeNotes.size(); }
     
-    int getNoteLength() const
-    {
-        return noteLength;
-    }
+    int getTimeBetweenNotes() const { return timeBetweenNotes;     }
+    
+    int getNoteLength() const       { return noteLength;           }
+    
+    int getGroundNoteIndex() const  { return groundNoteIndex;      }
+    
+    int getRelativeGroundNote() const { return relativeNotes.getLast(); }
     
 private:
     
     String mode;
     Array<int> relativeNotes;
-    int normalizedGroundNoteIndex;
+    int groundNoteIndex;
     int midiOffset;
-    int noteLength, timeBetweenNotes;
+    int noteLength;
+    int timeBetweenNotes;
+    
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Melody)
 };
 
+//===============================================================================================
+
+template <>
+class VariantConverter <Melody::Ptr> final
+{
+public:
+    static var toVar (const Melody::Ptr& melody)
+    {
+        return melody.get();
+    }
+    
+    static Melody::Ptr fromVar (const var& melody)
+    {
+        return dynamic_cast<Melody*> (melody.getObject());
+    }
+};
 
 
 //===============================================================================================
@@ -97,26 +119,23 @@ public:
     
     Melody::Ptr generateMelody (int numNotes) noexcept
     {
-        auto mode = getRandomMode();
-        
-        auto relativeNotes = generateRelativeNotesForMode (mode, numNotes);
-        
-        auto groundNoteIndex = getIndexGroundNoteForMode (mode);
-        
-        auto midiOffset = generateRandomMidiOffset();
-        
-        auto timeBetweenNotes = 400;
-        auto noteLength = 200;
+        auto mode             = getRandomMode();
+        auto relativeNotes    = generateRelativeNotesForMode (mode, numNotes);
+        auto groundNoteIndex  = getIndexGroundNoteForMode (mode);
+        auto midiOffset       = generateRandomMidiOffset();
+        auto timeBetweenNotes = timeBetweenNotesMs;
+        auto noteLength       = noteLengthMs;
         
         print ("mode:", mode);
         
         return new Melody { mode, relativeNotes, groundNoteIndex, midiOffset, noteLength, timeBetweenNotes };
     }
     
-    void setNumNotesInMelody (int num)
-    {
-        numNotes = num;
-    }
+    void setNumNotesInMelody (int num) { numNotes = num; }
+    
+    void setTimeBetweenNotesMs (int timeInMs) { timeBetweenNotesMs = timeInMs; }
+    
+    void setNoteLengthInMs (int timeInMs)     { noteLengthMs = timeInMs; }
     
     int generateRandomMidiOffset() { return random.nextInt (12) + 60; }
     
@@ -142,8 +161,7 @@ public:
     {
         auto transpose = random.nextInt (12) + 60;
         
-        for (auto& note : relativeNotes)
-            note += transpose;
+        for (auto& note : relativeNotes) note += transpose;
         
         return relativeNotes;
     }
@@ -190,7 +208,10 @@ public:
     const Array<String> modes { "D", "E", "F", "G" };
     int numNotes;
     const Array<int> normalizedMidiNoteDistances = { 0, 2, 4, 5, 7, 9, 11 };
-    const Array<String> noteNames { "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" };
+    int timeBetweenNotesMs { 400 };
+    int noteLengthMs { 200 };
+    
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MelodyGenerator)
 };
 
 

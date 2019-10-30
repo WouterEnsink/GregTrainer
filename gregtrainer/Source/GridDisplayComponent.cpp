@@ -59,7 +59,7 @@ public:
     
     static Colour fromVar(const var& colourString)
     {
-        return Colour::fromString(colourString.toString());
+        return Colour::fromString (colourString.toString());
     }
 };
 
@@ -275,13 +275,13 @@ void GridDisplayComponent::setStateForTile (int column, int row, TileState state
 }
 
 
-void GridDisplayComponent::setSetabilityTile (int column, int row, bool settable) noexcept
+void GridDisplayComponent::setSetabilityTile (int column, int row, bool setable) noexcept
 {
     jassert (row < numRows && column < numColumns);
     
     auto tile = tree.getChildWithName (GridTileIdentifierManager::getIdentifierForIndex (column, row));
     
-    tile.setProperty (IDs::Grid::TileSetable, settable, nullptr);
+    tile.setProperty (IDs::Grid::TileSetable, setable, nullptr);
 }
 
 
@@ -329,6 +329,35 @@ void GridDisplayComponent::setAllRowsInColumnInactiveExceptThisOne (int column, 
     for (int row = 0; row < numRows; ++row)
         if (row != rowToLeaveActive)
             setStateForTile (column, row, TileState::tileInactive);
+}
+
+
+void GridDisplayComponent::setStateForTileWithRelativeNoteInColumn (int column, int relativeNote, TileState state)
+{
+    for (int row = 0; row < numRows; ++row)
+    {
+        auto id = GridTileIdentifierManager::getIdentifierForIndex (column, row);
+        auto tile = tree.getChildWithName (id);
+        
+        if (static_cast<int> (tile[IDs::Grid::TileRelativeNote]) == relativeNote)
+            setStateForTile (column, row, state);
+    }
+}
+
+int GridDisplayComponent::getRelativeNoteOfActiveTileInColumn (int column)
+{
+    for (int row = 0; row < numRows; ++row)
+    {
+        auto tileType = GridTileIdentifierManager::getIdentifierForIndex (column, row);
+        auto tile = tree.getChildWithName (tileType);
+        
+        if (VariantConverter<TileState>::fromVar (tile[IDs::Grid::TileState]) == TileState::tileActive)
+        {
+            return tile[IDs::Grid::TileRelativeNote];
+        }
+    }
+    
+    return -1;
 }
 
 

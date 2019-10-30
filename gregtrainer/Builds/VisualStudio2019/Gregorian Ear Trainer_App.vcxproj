@@ -1915,6 +1915,7 @@
     <ClInclude Include="..\..\Source\ExtraMenus.h"/>
     <ClInclude Include="..\..\Source\GridDisplayComponent.h"/>
     <ClInclude Include="..\..\Source\MainComponent.h"/>
+    <ClInclude Include="..\..\Source\AnswerChecker.h"/>
     <ClInclude Include="..\..\Source\TrainerEngine.h"/>
     <ClInclude Include="..\..\Source\MelodyGenerator.h"/>
     <ClInclude Include="..\..\Source\MidiGenerator.h"/>

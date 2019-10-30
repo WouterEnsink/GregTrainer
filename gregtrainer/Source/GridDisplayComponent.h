@@ -56,7 +56,11 @@ public:
     
     void setSetabilityColumn (int column, bool settable) noexcept;
     
+    void setStateForTileWithRelativeNoteInColumn (int column, int relativeNote, TileState);
+    
     void turnAllTilesOff() noexcept;
+    
+    int getRelativeNoteOfActiveTileInColumn (int column);
     
     //======================================================================
     
@@ -92,6 +96,5 @@ private:
     
     //======================================================================
     
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(GridDisplayComponent)
-    
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (GridDisplayComponent)
 };

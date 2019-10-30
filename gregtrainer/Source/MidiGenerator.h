@@ -38,7 +38,7 @@ public:
     {
         if (melody != nullptr)
         {
-            notesToPlay = melody->getMidiNotes();
+            notesToPlay = melody->generateMidiNotes();
             setTimeBetweenNotesInMs (melody->getTimeBetweenNotes());
             setNoteLengthInMs (melody->getNoteLength());
         }
@@ -46,19 +46,6 @@ public:
         {
             print ("error MidiGenerator::setMelody: melody == nullptr");
         }
-    }
-    
-    // set note length needs to be called after this one
-    void setTimeBetweenNotesInMs (int timeInMs) noexcept
-    {
-        timeBetweenNotesInMs = timeInMs;
-        recalculateSettings();
-    }
-
-    void setNoteLengthInMs (int timeInMs) noexcept
-    {
-        noteLengthInMs = timeInMs;
-        recalculateSettings();
     }
     
     void startPlaying() noexcept
@@ -74,23 +61,6 @@ public:
     {
         isCurrentlyPlaying = false;
     }
-    
-    int getNextMidiNoteOn() noexcept
-    {
-        return notesIndexNoteOn < notesToPlay.size() ? notesToPlay[notesIndexNoteOn++] : 0;
-    }
-    
-    int getNextMidiNoteOff() noexcept
-    {
-        return notesIndexNoteOff < notesToPlay.size() ? notesToPlay[notesIndexNoteOff++] : 0;
-    }
-    
-    void recalculateSettings()
-    {
-        noteLengthInSamples = noteLengthInMs * sampleRate * 0.001;
-        numSamplesBetweenNotes = timeBetweenNotesInMs * sampleRate * 0.001;
-    }
-    
     
     // fills the midibuffer with messages if needed
     void renderNextMidiBlock (MidiBuffer& buffer, int numSamples) noexcept
@@ -109,7 +79,8 @@ public:
             {
                 remainderNoteOn -= numSamples;
             }
-
+            
+            
             if (remainderNoteOff < numSamples)
             {
                 if (auto note = getNextMidiNoteOff(); note != 0)
@@ -126,7 +97,38 @@ public:
     }
     
     
+    
 private:
+    
+    void setTimeBetweenNotesInMs (int timeInMs) noexcept
+    {
+        timeBetweenNotesInMs = timeInMs;
+        recalculateSettings();
+    }
+
+    void setNoteLengthInMs (int timeInMs) noexcept
+    {
+        noteLengthInMs = timeInMs;
+        recalculateSettings();
+    }
+    
+
+    int getNextMidiNoteOn() noexcept
+    {
+        return notesIndexNoteOn < notesToPlay.size() ? notesToPlay[notesIndexNoteOn++] : 0;
+    }
+    
+    int getNextMidiNoteOff() noexcept
+    {
+        return notesIndexNoteOff < notesToPlay.size() ? notesToPlay[notesIndexNoteOff++] : 0;
+    }
+    
+    void recalculateSettings()
+    {
+        noteLengthInSamples = noteLengthInMs * sampleRate * 0.001;
+        numSamplesBetweenNotes = timeBetweenNotesInMs * sampleRate * 0.001;
+    }
+    
     
     int numSamplesBetweenNotes;
     int remainderNoteOn; //how many samples to go until a note needs to be put into a buffer

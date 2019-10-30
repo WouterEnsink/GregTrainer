@@ -11,7 +11,8 @@ MainComponent::MainComponent (ValueTree& t) :
                                                 tree (t),
                                                 gridDisplay (tree, 8, 8, { "C", "B", "A", "G", "F", "E", "D", "C" },
                                                              { 12, 11, 9, 7, 5, 4, 2, 0 }),
-                                                trainerEngine (tree, 8)
+                                                trainerEngine (tree, 8),
+                                                answerChecker(gridDisplay)
 {
     setSize (800, 600);
 
@@ -37,28 +38,34 @@ MainComponent::MainComponent (ValueTree& t) :
     generateButton.onClick = [this]()
     {
         gridDisplay.turnAllTilesOff();
-        Random rand;
-        gridDisplay.setStateForTile (gridDisplay.getNumColumns()-1,
-                                     rand.nextInt (gridDisplay.getNumRows() - 1),
-                                     GridDisplayComponent::TileState::tileActive);
         
         gridDisplay.setSetabilityColumn (gridDisplay.getNumColumns() - 1, false);
         
         trainerEngine.generateNextMelody();
+        
         playButton.setButtonText ("Start Playing");
+        
+        auto engine = tree.getChildWithName (IDs::Engine::EngineRoot);
+        auto melody = VariantConverter<Melody::Ptr>::fromVar (engine[IDs::Engine::EngineMelody]);
+        
+        gridDisplay.setStateForTileWithRelativeNoteInColumn (gridDisplay.getNumColumns() - 1,
+                                                             melody->getRelativeGroundNote(),
+                                                             GridDisplayComponent::TileState::tileActive);
         
         if (auto engine = tree.getChildWithName (IDs::Engine::EngineRoot); engine.isValid())
         {
             engine.setProperty (IDs::Engine::PlayState, true, nullptr);
         }
-        
-        
     };
     
     
-    submitButton.onClick = [this]
+    submitButton.onClick = [this]()
     {
         answerLabel.setText ("You Suck", NotificationType::dontSendNotification);
+        auto engine = tree.getChildWithName (IDs::Engine::EngineRoot);
+        auto engineMelody = VariantConverter<Melody::Ptr>::fromVar (engine[IDs::Engine::EngineMelody]);
+        
+        answerChecker.compareMelodyToGridState (engineMelody);
     };
     
     infoButton.onClick = [this]()
@@ -71,7 +78,7 @@ MainComponent::MainComponent (ValueTree& t) :
     colourPickButton.onClick = [this]()
     {
         if (colourPicker == nullptr)
-            colourPicker.reset (new ColourPickerWindow(tree, [this]() { colourPicker = nullptr; }));
+            colourPicker.reset (new ColourPickerWindow (tree, [this]() { colourPicker = nullptr; }));
     };
     
     

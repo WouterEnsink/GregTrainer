@@ -20,6 +20,7 @@
               file="Source/MainComponent.cpp"/>
       </GROUP>
       <GROUP id="{5E04B6C1-E8EF-9C69-3396-76633A9B342E}" name="Engine">
+        <FILE id="ucqO3C" name="AnswerChecker.h" compile="0" resource="0" file="Source/AnswerChecker.h"/>
         <FILE id="jkT34E" name="TrainerEngine.cpp" compile="1" resource="0"
               file="Source/TrainerEngine.cpp"/>
         <FILE id="J1XduX" name="TrainerEngine.h" compile="0" resource="0" file="Source/TrainerEngine.h"/>

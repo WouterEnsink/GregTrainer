@@ -65,17 +65,18 @@ public:
         for (int column = 0; column < numColumns; ++column)
         {
             auto r = Array<Identifier>();
+            
             for (int row = 0; row < numRows; ++row)
                 r.add (generateIdentifierForIndex (column, row));
             
-            tileIdentifiers.add(r);
+            tileIdentifiers.add (r);
         }
     }
     
     static Identifier getIdentifierForIndex (int column, int row)
     {
         jassert (column < numColumns && row < numRows);
-        print("getid:", tileIdentifiers.size());
+    
         return tileIdentifiers[column][row];
     }
     
@@ -97,9 +98,8 @@ private:
     static Identifier generateIdentifierForIndex (int column, int row)
     {
         StringArray a { String {column}, String {row} };
-        auto ide = a.joinIntoString ("_");
-        print("id:", ide);
-        return ide;
+    
+        return a.joinIntoString ("_");
     }
 
 };

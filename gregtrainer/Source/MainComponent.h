@@ -7,6 +7,7 @@
 #include "MelodyGenerator.h"
 #include "TrainerEngine.h"
 #include "ExtraMenus.h"
+#include "AnswerChecker.h"
 
 class MainComponent   : public AudioAppComponent
 {
@@ -47,6 +48,8 @@ private:
     GridDisplayComponent gridDisplay;
     
     TrainerEngine trainerEngine;
+    
+    AnswerChecker answerChecker;
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainComponent)
 };

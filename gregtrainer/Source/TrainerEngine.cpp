@@ -44,14 +44,13 @@ void TrainerEngine::prepareToPlay (int numSamplesPerBlockExpected, double sample
 
 void TrainerEngine::getNextAudioBlock (const AudioSourceChannelInfo& channelInfo)
 {
-    auto midi = MidiBuffer();
+    auto midiBuffer = MidiBuffer();
     auto numSamples = channelInfo.buffer->getNumSamples();
 
-    midiGenerator.renderNextMidiBlock (midi, numSamples);
+    midiGenerator.renderNextMidiBlock (midiBuffer, numSamples);
     
-  
     if (playbackInstrument != nullptr)
-        playbackInstrument->processBlock (*channelInfo.buffer, midi);
+        playbackInstrument->processBlock (*channelInfo.buffer, midiBuffer);
     
 }
 
@@ -73,19 +72,21 @@ void TrainerEngine::setNumNotesInMelody (int numNotes)
 
 void TrainerEngine::setTimeBetweenNotesInMs (int intervalTimeMs)
 {
-    midiGenerator.setTimeBetweenNotesInMs (intervalTimeMs);
+    melodyGenerator.setTimeBetweenNotesMs (intervalTimeMs);
 }
 
 void TrainerEngine::setNoteLengthInMs (int timeInMs)
 {
-    midiGenerator.setNoteLengthInMs (timeInMs);
+    melodyGenerator.setNoteLengthInMs (timeInMs);
 }
 
 void TrainerEngine::generateNextMelody()
 {
     melodyGenerator.generateMelody();
     
-    midiGenerator.setMelody (dynamic_cast<Melody*> (engineState[IDs::Engine::EngineMelody].getObject()));
+    auto melody = VariantConverter<Melody::Ptr>::fromVar (engineState[IDs::Engine::EngineMelody]);
+
+    midiGenerator.setMelody (melody);
 }
 
 void TrainerEngine::startPlayingMelody()
