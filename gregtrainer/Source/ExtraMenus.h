@@ -22,7 +22,7 @@ public:
     InfoPanelComponent()
     {
         addAndMakeVisible (emailLink);
-        Font fond { "Arial", 25.f, Font::plain };
+        Font fond { "Arial", 25.0f, Font::plain };
         emailLink.setFont (fond, false);
         emailLink.setColour (HyperlinkButton::textColourId, Colours::blue);
     }
@@ -31,7 +31,7 @@ public:
     {
         g.fillAll (Colours::black);
         g.setColour (Colours::white);
-        g.setFont (30.f);
+        g.setFont (30.0f);
         
         g.drawText ("Author: Wouter Ensink",
                     getLocalBounds().toFloat().withTrimmedBottom (getHeight() / 2),
@@ -51,7 +51,7 @@ public:
     void resized() override
     {
         auto bounds = getLocalBounds().withTrimmedTop (getHeight() / 3).withTrimmedBottom (getHeight() / 3);
-        emailLink.setBounds (bounds.translated(0, getHeight() / 3));
+        emailLink.setBounds (bounds.translated (0, getHeight() / 3));
     }
     
     HyperlinkButton emailLink { "wouter.ensink@student.hku.nl", { "wouter.ensink@student.hku.nl" } };
@@ -63,7 +63,8 @@ public:
 // Colour Picker to set the colour of the grid
 
 
-class ColourPickerWindow     : public DocumentWindow, public ChangeListener
+class ColourPickerWindow     : public DocumentWindow,
+                               public ChangeListener
 {
 public:
     
@@ -96,7 +97,6 @@ private:
     void changeListenerCallback (ChangeBroadcaster* broadcaster) override
     {
         auto gridTree = tree.getChildWithName (IDs::Grid::GridRoot);
-        
         
         if (broadcaster == selector)
             gridTree.setProperty (IDs::Grid::TileInactiveColour, selector->getCurrentColour().toString(), nullptr);

@@ -52,7 +52,7 @@ private:
         for (int c = 0; c < grid.getNumColumns(); ++c)
         {
             auto wrongAnswerState = GridDisplayComponent::TileState::tileWrongAnswer;
-            grid.setStateForTileWithRelativeNoteInColumn (c, relativeNotes[c], wrongAnswerState);
+            grid.setStateForTileInColumnWithThisRelativeNote (c, relativeNotes[c], wrongAnswerState);
         }
     }
     
@@ -63,7 +63,7 @@ private:
         for (int c = 0; c < grid.getNumColumns(); ++c)
         {
             auto rightAnswerState = GridDisplayComponent::TileState::tileRightAnswer;
-            grid.setStateForTileWithRelativeNoteInColumn (c, relativeNotes[c], rightAnswerState);
+            grid.setStateForTileInColumnWithThisRelativeNote (c, relativeNotes[c], rightAnswerState);
         }
     }
     

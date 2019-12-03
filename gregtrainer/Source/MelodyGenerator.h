@@ -53,13 +53,13 @@ public:
         return midiNotes;
     }
     
-    int getNumNotes() const         { return relativeNotes.size(); }
+    int getNumNotes() const           { return relativeNotes.size(); }
     
-    int getTimeBetweenNotes() const { return timeBetweenNotes;     }
+    int getTimeBetweenNotes() const   { return timeBetweenNotes;     }
     
-    int getNoteLength() const       { return noteLength;           }
+    int getNoteLength() const         { return noteLength;           }
     
-    int getGroundNoteIndex() const  { return groundNoteIndex;      }
+    int getGroundNoteIndex() const    { return groundNoteIndex;      }
     
     int getRelativeGroundNote() const { return relativeNotes.getLast(); }
     
@@ -111,12 +111,6 @@ public:
     
     MelodyGenerator (ValueTree& t, int numNotes)  : tree (t), numNotes (numNotes) {}
     
-    // Fix Me
-    Array<int> compareMelodiesAndGetDifference (Melody::Ptr first, Melody::Ptr second) const
-    {
-        return { };
-    }
-    
     Melody::Ptr generateMelody (int numNotes) noexcept
     {
         auto mode             = getRandomMode();
@@ -126,18 +120,16 @@ public:
         auto timeBetweenNotes = timeBetweenNotesMs;
         auto noteLength       = noteLengthMs;
         
-        print ("mode:", mode);
-        
         return new Melody { mode, relativeNotes, groundNoteIndex, midiOffset, noteLength, timeBetweenNotes };
     }
     
-    void setNumNotesInMelody (int num) { numNotes = num; }
+    void setNumNotesInMelody (int num)          { numNotes = num;                  }
     
-    void setTimeBetweenNotesMs (int timeInMs) { timeBetweenNotesMs = timeInMs; }
+    void setTimeBetweenNotesMs (int timeInMs)   { timeBetweenNotesMs = timeInMs;   }
     
-    void setNoteLengthInMs (int timeInMs)     { noteLengthMs = timeInMs; }
+    void setNoteLengthInMs (int timeInMs)       { noteLengthMs = timeInMs;         }
     
-    int generateRandomMidiOffset() { return random.nextInt (12) + 60; }
+    auto generateRandomMidiOffset() -> int      { return random.nextInt (12) + 60; }
     
     void generateMelody()
     {
@@ -181,18 +173,12 @@ public:
         
         for (int i = 1; i < numNotes; ++i)
         {
-            auto direction = random.nextInt (2) ? 1 : -1;
+            auto direction = random.nextBool() ? 1 : -1;
 
             auto interval = direction * distances[random.nextInt (distances.size())];
 
-            currentNoteIndex += interval;
-
-            if (currentNoteIndex > normalizedMidiNoteDistances.size() - 1)
-                currentNoteIndex = normalizedMidiNoteDistances.size() - 1;
-            
-            if (currentNoteIndex < 0)
-                currentNoteIndex = 0;
-
+            currentNoteIndex = jlimit (0, normalizedMidiNoteDistances.size() - 1, currentNoteIndex + interval);
+        
             notes.add (normalizedMidiNoteDistances[currentNoteIndex]);
         }
         

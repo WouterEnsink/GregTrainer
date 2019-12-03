@@ -17,9 +17,7 @@
 // MidiGenerator is the piece of code that translates the information from a Melody object into
 // actual MIDI and fills buffers with that MIDI once startPlaying() is called
 
-// to do: make set notes understand the Melody class
-
-class MidiGenerator
+class MidiGenerator final
 {
 public:
     
@@ -131,12 +129,13 @@ private:
     
     
     int numSamplesBetweenNotes;
-    int remainderNoteOn; //how many samples to go until a note needs to be put into a buffer
+    int remainderNoteOn;
     int remainderNoteOff;
     Array<int> notesToPlay;
-    int notesIndexNoteOn, notesIndexNoteOff;
+    int notesIndexNoteOn;
+    int notesIndexNoteOff;
     double sampleRate;
-    int timeBetweenNotesInMs; //in ms
+    int timeBetweenNotesInMs;
     int noteLengthInMs;
     int noteLengthInSamples;
     bool isCurrentlyPlaying { false };

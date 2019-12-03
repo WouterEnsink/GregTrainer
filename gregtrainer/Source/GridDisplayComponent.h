@@ -56,7 +56,7 @@ public:
     
     void setSetabilityColumn (int column, bool settable) noexcept;
     
-    void setStateForTileWithRelativeNoteInColumn (int column, int relativeNote, TileState);
+    void setStateForTileInColumnWithThisRelativeNote (int column, int relativeNote, TileState);
     
     void turnAllTilesOff() noexcept;
     

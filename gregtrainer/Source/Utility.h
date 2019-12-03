@@ -13,13 +13,15 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 
 //========================================================================================
-// Some Utitlity functions and classes to make things a little cleaner and more confinient
+// Some Utility functions and classes to make things a little cleaner and more confinient
 
+//========================================================================================
+// prints all its agruments to cout, with spaces inbetween them
 
-template <typename... T>
-auto print (T&&... args) noexcept
+template <typename... IOStreamableType>
+auto print (IOStreamableType&&... arguments) noexcept
 {
-    ([] (auto&& arg) { std::cout << arg << " "; } (args), ...);
+    ([] (auto&& argument) { std::cout << argument << " "; } (arguments), ...);
     
     std::cout << '\n';
 }
@@ -30,9 +32,9 @@ auto print (T&&... args) noexcept
 
 
 template <typename Function>
-auto visitComponents (const Array<Component*>& components, const Function& f) noexcept
+auto visitComponents (const Array<Component*>& components, const Function& function) noexcept
 {
-    for (auto* c : components) f (*c);
+    for (auto* c : components) function (*c);
 }
 
 
@@ -44,7 +46,7 @@ auto visitComponents (const Array<Component*>& components, const Function& f) no
 template <typename T>
 auto getRectangleDimentions (const Rectangle<T>& r) noexcept
 {
-    return std::tuple<T, T, T, T> { r.getX(), r.getY(), r.getWidth(), r.getHeight() };
+    return std::tuple { r.getX(), r.getY(), r.getWidth(), r.getHeight() };
 }
 
 

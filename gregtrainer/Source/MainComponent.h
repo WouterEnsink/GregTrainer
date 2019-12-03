@@ -31,7 +31,7 @@ public:
 private:
     //==============================================================================
     
-    std::unique_ptr<ColourPickerWindow> colourPicker;
+    std::unique_ptr<ColourPickerWindow> colourPickerPanel;
     
     void initializeAudioSettings();
     
@@ -39,7 +39,7 @@ private:
     TextButton generateButton   { "Generate Melody"     };
     TextButton submitButton     { "Submit Answer"       };
     TextButton infoButton       { "i"                   };
-    TextButton colourPickButton { "Open Colour Picker"  };
+    //TextButton colourPickButton { "Open Colour Picker"  };
     
     Label answerLabel ;
     

@@ -147,7 +147,7 @@ private:
     
     Font noteFont { "Arial", 30.f, Font::plain };
     
-    float roundness { 5.f };
+    float roundness { 5.0f };
     
     CachedValue<TileState> tileState;
     CachedValue<String> tileText;
@@ -198,7 +198,7 @@ private:
 
 
 //===============================================================================================
-
+// Below all the implementations for GridDisplayComponent functions
 
 GridDisplayComponent::GridDisplayComponent (ValueTree& t, int numColumns, int numRows,
                                             const StringArray& rowsText, const Array<int>& relativeNotes) :
@@ -228,7 +228,7 @@ GridDisplayComponent::~GridDisplayComponent()
 void GridDisplayComponent::paint (Graphics& g)
 {
     g.setColour (Colours::black);
-    g.fillRoundedRectangle (getLocalBounds().toFloat(), 5.f);
+    g.fillRoundedRectangle (getLocalBounds().toFloat(), 5.0f);
 }
 
 
@@ -332,7 +332,7 @@ void GridDisplayComponent::setAllRowsInColumnInactiveExceptThisOne (int column, 
 }
 
 
-void GridDisplayComponent::setStateForTileWithRelativeNoteInColumn (int column, int relativeNote, TileState state)
+void GridDisplayComponent::setStateForTileInColumnWithThisRelativeNote (int column, int relativeNote, TileState state)
 {
     for (int row = 0; row < numRows; ++row)
     {

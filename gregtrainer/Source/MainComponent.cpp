@@ -9,23 +9,24 @@
 
 MainComponent::MainComponent (ValueTree& t) :
                                                 tree (t),
-                                                gridDisplay (tree, 8, 8, { "C", "B", "A", "G", "F", "E", "D", "C" },
+                                                gridDisplay (tree, 8, 8,
+                                                             { "C", "B", "A", "G", "F", "E", "D", "C" },
                                                              { 12, 11, 9, 7, 5, 4, 2, 0 }),
                                                 trainerEngine (tree, 8),
-                                                answerChecker(gridDisplay)
+                                                answerChecker (gridDisplay)
 {
     setSize (800, 600);
 
     initializeAudioSettings();
     
-    visitComponents({
+    visitComponents ({
         &playButton,
         &gridDisplay,
         &generateButton,
         &submitButton,
         &answerLabel,
         &infoButton,
-        &colourPickButton
+        //&colourPickButton
     }, [this] (Component& c) { addAndMakeVisible (c); });
     
     
@@ -34,6 +35,7 @@ MainComponent::MainComponent (ValueTree& t) :
         trainerEngine.startPlayingMelody();
         playButton.setButtonText ("Play Again");
     };
+    
     
     generateButton.onClick = [this]()
     {
@@ -48,20 +50,14 @@ MainComponent::MainComponent (ValueTree& t) :
         auto engine = tree.getChildWithName (IDs::Engine::EngineRoot);
         auto melody = VariantConverter<Melody::Ptr>::fromVar (engine[IDs::Engine::EngineMelody]);
         
-        gridDisplay.setStateForTileWithRelativeNoteInColumn (gridDisplay.getNumColumns() - 1,
-                                                             melody->getRelativeGroundNote(),
-                                                             GridDisplayComponent::TileState::tileActive);
-        
-        if (auto engine = tree.getChildWithName (IDs::Engine::EngineRoot); engine.isValid())
-        {
-            engine.setProperty (IDs::Engine::PlayState, true, nullptr);
-        }
+        gridDisplay.setStateForTileInColumnWithThisRelativeNote (gridDisplay.getNumColumns() - 1,
+                                                                 melody->getRelativeGroundNote(),
+                                                                 GridDisplayComponent::TileState::tileActive);
     };
     
     
     submitButton.onClick = [this]()
     {
-        answerLabel.setText ("You Suck", NotificationType::dontSendNotification);
         auto engine = tree.getChildWithName (IDs::Engine::EngineRoot);
         auto engineMelody = VariantConverter<Melody::Ptr>::fromVar (engine[IDs::Engine::EngineMelody]);
         
@@ -75,11 +71,11 @@ MainComponent::MainComponent (ValueTree& t) :
         CallOutBox::launchAsynchronously (infoPanel, infoButton.getScreenBounds(), nullptr);
     };
     
-    colourPickButton.onClick = [this]()
-    {
-        if (colourPicker == nullptr)
-            colourPicker.reset (new ColourPickerWindow (tree, [this]() { colourPicker = nullptr; }));
-    };
+    //colourPickButton.onClick = [this]()
+    //{
+    //    if (colourPickerPanel == nullptr)
+    //        colourPickerPanel.reset (new ColourPickerWindow (tree, [this]() { colourPickerPanel = nullptr; }));
+    //};
     
     
     answerLabel.setText ("Answer will be shown here!", NotificationType::dontSendNotification);
@@ -139,14 +135,14 @@ void MainComponent::resized()
     
     // set bounds for buttons with even spacing
     visitComponents({ &playButton, &generateButton, &submitButton },
-                    [&r] (auto& c) { c.setBounds(r); r.translate(250, 0); });
+                    [&r] (auto& c) { c.setBounds (r); r.translate (250, 0); });
     
     gridDisplay.setBounds ({ 52, 100, 696, 320 });
     
     answerLabel.setBounds (100, 500, 600, 100);
     infoButton.setBounds (10, 10, 25, 25);
     
-    colourPickButton.setBounds (50, 450, 200, 50);
+    //colourPickButton.setBounds (50, 450, 200, 50);
     
 }
 
