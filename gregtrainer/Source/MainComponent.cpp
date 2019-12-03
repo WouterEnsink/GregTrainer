@@ -24,7 +24,7 @@ MainComponent::MainComponent (ValueTree& t) :
         &gridDisplay,
         &generateButton,
         &submitButton,
-        &answerLabel,
+       // &answerLabel,
         &infoButton,
         //&colourPickButton
     }, [this] (Component& c) { addAndMakeVisible (c); });
@@ -139,7 +139,7 @@ void MainComponent::resized()
     
     gridDisplay.setBounds ({ 52, 100, 696, 320 });
     
-    answerLabel.setBounds (100, 500, 600, 100);
+   // answerLabel.setBounds (100, 500, 600, 100);
     infoButton.setBounds (10, 10, 25, 25);
     
     //colourPickButton.setBounds (50, 450, 200, 50);
