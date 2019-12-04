@@ -24,9 +24,7 @@ MainComponent::MainComponent (ValueTree& t) :
         &gridDisplay,
         &generateButton,
         &submitButton,
-       // &answerLabel,
         &infoButton,
-        //&colourPickButton
     }, [this] (Component& c) { addAndMakeVisible (c); });
     
     
@@ -41,7 +39,7 @@ MainComponent::MainComponent (ValueTree& t) :
     {
         gridDisplay.turnAllTilesOff();
         
-        gridDisplay.setSetabilityColumn (gridDisplay.getNumColumns() - 1, false);
+        gridDisplay.setSetabilityColumn (0, false);
         
         trainerEngine.generateNextMelody();
         
@@ -50,8 +48,8 @@ MainComponent::MainComponent (ValueTree& t) :
         auto engine = tree.getChildWithName (IDs::Engine::EngineRoot);
         auto melody = VariantConverter<Melody::Ptr>::fromVar (engine[IDs::Engine::EngineMelody]);
         
-        gridDisplay.setStateForTileInColumnWithThisRelativeNote (gridDisplay.getNumColumns() - 1,
-                                                                 melody->getRelativeGroundNote(),
+        gridDisplay.setStateForTileInColumnWithThisRelativeNote (0,
+                                                                 melody->getRelativeFirstNote(),
                                                                  GridDisplayComponent::TileState::tileActive);
     };
     
@@ -71,15 +69,7 @@ MainComponent::MainComponent (ValueTree& t) :
         CallOutBox::launchAsynchronously (infoPanel, infoButton.getScreenBounds(), nullptr);
     };
     
-    //colourPickButton.onClick = [this]()
-    //{
-    //    if (colourPickerPanel == nullptr)
-    //        colourPickerPanel.reset (new ColourPickerWindow (tree, [this]() { colourPickerPanel = nullptr; }));
-    //};
-    
-    
-    answerLabel.setText ("Answer will be shown here!", NotificationType::dontSendNotification);
-    answerLabel.setJustificationType (Justification::centred);
+ 
 }
 
 MainComponent::~MainComponent()

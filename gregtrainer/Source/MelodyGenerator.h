@@ -63,6 +63,8 @@ public:
     
     int getRelativeGroundNote() const { return relativeNotes.getLast(); }
     
+    int getRelativeFirstNote() const  { return relativeNotes[0];    }
+    
 private:
     
     String mode;

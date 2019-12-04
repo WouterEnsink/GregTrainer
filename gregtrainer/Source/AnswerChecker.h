@@ -23,10 +23,12 @@ public:
     
     void compareMelodyToGridState (Melody::Ptr engineMelody)
     {
-        auto gridMelody = makeMelodyFromGridState();
-        
-        setTileStatesForWrongAnswer (gridMelody);
-        setTileStatesForRightAnswer (engineMelody);
+        if (engineMelody != nullptr)
+        {
+            auto gridMelody = makeMelodyFromGridState();
+            setTileStatesForWrongAnswer (gridMelody);
+            setTileStatesForRightAnswer (engineMelody);
+        }
     }
     
 private:
