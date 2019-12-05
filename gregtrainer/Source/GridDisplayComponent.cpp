@@ -57,7 +57,7 @@ public:
         return colour.toString();
     }
     
-    static Colour fromVar(const var& colourString)
+    static Colour fromVar (const var& colourString)
     {
         return Colour::fromString (colourString.toString());
     }
@@ -127,7 +127,7 @@ public:
         g.fillRoundedRectangle (getLocalBounds().toFloat(), roundness);
         g.setColour (getCurrentTextColour());
         g.setFont (noteFont);
-        g.drawText (tileText, getLocalBounds().reduced(10), Justification::centred);
+        g.drawText (tileText, getLocalBounds().reduced (10), Justification::centred);
     }
     
     
@@ -145,7 +145,7 @@ private:
     ValueTree valueTree;
     Identifier tileIdentifier;
     
-    Font noteFont { "Arial", 30.f, Font::plain };
+    Font noteFont { "Arial", 30.0f, Font::plain };
     
     float roundness { 5.0f };
     
@@ -161,8 +161,8 @@ private:
     CachedValue<bool> mouseDownOnTile;
     CachedValue<bool> tileIsSetable;
     
-    Colour mouseHooverColour        { Colours::dimgrey      };
-    Colour mouseDownColour          { Colours::white        };
+    Colour mouseHooverColour { Colours::dimgrey };
+    Colour mouseDownColour   { Colours::white   };
     
     //================================================================================
     
