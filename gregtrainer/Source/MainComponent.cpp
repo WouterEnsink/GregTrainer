@@ -101,11 +101,11 @@ void MainComponent::initializeAudioSettings()
         && ! RuntimePermissions::isGranted (RuntimePermissions::recordAudio))
     {
         RuntimePermissions::request (RuntimePermissions::recordAudio,
-                                     [&] (bool granted) { if (granted)  setAudioChannels (2, 2); });
+                                     [&] (bool granted) { if (granted)  setAudioChannels (0, 2); });
     }
     else
     {
-        setAudioChannels (2, 2);
+        setAudioChannels (0, 2);
     }
 }
 

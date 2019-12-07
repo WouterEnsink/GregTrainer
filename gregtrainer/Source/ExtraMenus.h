@@ -37,7 +37,7 @@ public:
                     getLocalBounds().toFloat().withTrimmedBottom (getHeight() / 2),
                     Justification::centred);
         
-        g.setFont (25.f);
+        g.setFont (25.0f);
         
         auto bounds = getLocalBounds().toFloat();
         

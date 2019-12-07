@@ -55,7 +55,7 @@ public:
                                     tree (IDs::GlobalRoot)
         {
             setUsingNativeTitleBar (true);
-            setContentOwned (new MainComponent(tree), true);
+            setContentOwned (new MainComponent (tree), true);
 
            #if JUCE_IOS || JUCE_ANDROID
             setFullScreen (true);
